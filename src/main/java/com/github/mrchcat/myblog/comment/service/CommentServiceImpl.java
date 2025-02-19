@@ -8,11 +8,13 @@ import com.github.mrchcat.myblog.comment.repository.CommentRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
 

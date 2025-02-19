@@ -1,11 +1,15 @@
 package com.github.mrchcat.myblog.tag.repository;
 
 import com.github.mrchcat.myblog.tag.domain.Tag;
-import com.github.mrchcat.myblog.tag.dto.TagDto;
 
 import java.util.List;
+import java.util.Set;
 
 public interface TagRepository {
     List<Tag> getAllTagsByPost(long postId);
-    List<Tag> saveTags(List<String> tags);
+
+    public List<Tag> saveTagsForPost(Set<String> tagNames, long postId);
+
+    void deleteUnusedTags(List<Long> tagIds);
+
 }

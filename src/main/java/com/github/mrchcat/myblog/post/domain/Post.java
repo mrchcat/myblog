@@ -1,9 +1,12 @@
 package com.github.mrchcat.myblog.post.domain;
 
 
+import com.github.mrchcat.myblog.tag.domain.Tag;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter

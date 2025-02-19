@@ -11,11 +11,14 @@ import com.github.mrchcat.myblog.tag.dto.TagDto;
 import com.github.mrchcat.myblog.tag.service.TagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final CommentService commentService;
@@ -23,7 +26,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDto getPostDto(long postId) {
-        Post post = postRepository.getPost(postId);
+        Post post = postRepository.getPost(postId).orElseThrow(() -> new NoSuchElementException("Post not found"));
         PostDto postDto = PostMapper.toDto(post);
         addCommentToDto(postDto);
         List<TagDto> tags = tagService.getAllTagsByPost(postId);
@@ -47,9 +50,9 @@ public class PostServiceImpl implements PostService {
         post.setId(postId);
         postRepository.savePost(post);
 
-        PostDto postDto=PostMapper.toDto(post);
+        PostDto postDto = PostMapper.toDto(post);
 
-        List<TagDto> tagDto = tagService.saveTags(newPostDto.getTags(),postId);
+        List<TagDto> tagDto = tagService.saveTags(newPostDto.getTags(), postId);
         postDto.setTagsDto(tagDto);
 
         addCommentToDto(postDto);
@@ -57,7 +60,7 @@ public class PostServiceImpl implements PostService {
         return postDto;
     }
 
-    private void addCommentToDto(PostDto postDto){
+    private void addCommentToDto(PostDto postDto) {
         List<CommentDto> comments = commentService.getCommentsByPost(postDto.getId());
         postDto.setCommentsDto(comments);
     }

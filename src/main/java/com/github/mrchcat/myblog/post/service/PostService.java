@@ -1,6 +1,5 @@
 package com.github.mrchcat.myblog.post.service;
 
-import com.github.mrchcat.myblog.post.domain.Post;
 import com.github.mrchcat.myblog.post.dto.NewPostDto;
 import com.github.mrchcat.myblog.post.dto.PostDto;
 

@@ -8,5 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class NewCommentDto {
-    String text;
+    private String text;
+    private long postId;
+
 }

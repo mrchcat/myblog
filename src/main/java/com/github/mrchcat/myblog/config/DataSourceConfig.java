@@ -26,7 +26,9 @@ public class DataSourceConfig {
         dataSource.setPassword(password);
 
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(new ClassPathResource("schema.sql"));
+        populator.addScripts(new ClassPathResource("schema.sql"),
+                new ClassPathResource("fake-data.sql")
+                );
         populator.execute(dataSource);
         return dataSource;
     }

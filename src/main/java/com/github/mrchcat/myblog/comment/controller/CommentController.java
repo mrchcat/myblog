@@ -21,10 +21,10 @@ public class CommentController {
         return "redirect:/post/" + postId;
     }
 
-    @PostMapping(value = "post/{postId}/comment",params = "_method=add")
+    @PostMapping(value = "post/{postId}/comment", params = "_method=add")
     public String addComment(@PathVariable(value = "postId") long postId,
                              @RequestParam("text") String text) {
-        commentService.addComment(new NewCommentDto(text));
+        commentService.addComment(new NewCommentDto(text, postId));
         return "redirect:/post/" + postId;
     }
 

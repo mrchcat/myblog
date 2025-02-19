@@ -4,14 +4,16 @@ import com.github.mrchcat.myblog.tag.domain.Tag;
 import com.github.mrchcat.myblog.tag.dto.TagDto;
 import com.github.mrchcat.myblog.tag.mapper.TagMapper;
 import com.github.mrchcat.myblog.tag.repository.TagRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TagServiceImpl implements TagService {
     private final TagRepository tagRepository;
 
@@ -23,8 +25,8 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<TagDto> saveTags(String tags, long postId) {
-        List<String> tagStringList = TagMapper.toTagList(tags);
-        List<Tag> tagList = tagRepository.saveTags(tagStringList);
+        Set<String> tagStringList = TagMapper.toTagList(tags);
+        List<Tag> tagList = tagRepository.saveTagsForPost(tagStringList, postId);
         return TagMapper.toDto(tagList);
     }
 }

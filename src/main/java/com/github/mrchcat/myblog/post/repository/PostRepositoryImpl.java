@@ -1,86 +1,83 @@
 package com.github.mrchcat.myblog.post.repository;
 
 import com.github.mrchcat.myblog.post.domain.Post;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Optional;
 
 @Repository
-@Getter
-@Setter
+@RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepository {
-    private HashMap<Long, Post> posts = initPosts();
+    private final JdbcTemplate jdbc;
+    private final PostRowMapper postRowMapper;
 
-    private HashMap<Long, Post> initPosts() {
-        try {
-            HashMap<Long, Post> posts = new HashMap<>();
-            Path dir = Path.of("C:/Users/User/IdeaProjects/myblog/src/image/");
-            Path file = Path.of("cat.jpg");
-            byte[] imageArray = Files.readAllBytes(dir.resolve(file));
-            String encodedString = Base64.getEncoder().encodeToString(imageArray);
-            String text1 = """
-                    На сайте Кабмина зарегистрирована петиция с призывом лишить брони получателей грантов от USAID.
-                    Автор петиции считает, что сотрудники, чьи организации остались без финансирования, могут быть мобилизованы. А также предлагает провести аудит и тех, кто полученные средства использовал неэффективно или не по назначению, также лишить брони.
-                    Петиция набрала уже 2,3 тыс. подписей из 25 тыс. необходимых.
-                    """;
-            Post post1 = Post.builder()
-                    .id(1)
-                    .name("FirstPost")
-                    .text(text1)
-                    .base64Jpeg(encodedString)
-                    .likes(10)
-                    .commentsNumber(12)
-                    .build();
-            String text2 = """
-                    НВ Европе и на Украине не осталось запасов оружия на
-                    складах, заявил глава Rheinmetall Армин Паппергер.
-                    Он добавил, что спрос на оружие в регионе останется высоким даже после прекращения конфликта на Украине на фоне обещаний Трампа резко сократить военную поддержку Европы.
-                    """;
-            Post post2 = Post.builder()
-                    .id(2)
-                    .name("SecondPost")
-                    .text(text2)
-                    .base64Jpeg(encodedString)
-                    .likes(5)
-                    .commentsNumber(23)
-                    .build();
-            posts.put(post1.getId(), post1);
-            posts.put(post2.getId(), post2);
-            return posts;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Override
-    public Post getPost(long posId) {
-        return posts.get(posId);
+    public Optional<Post> getPost(long posId) {
+        String query = """
+                SELECT id,name,text,picture,text,likes,comment_nums
+                FROM posts
+                WHERE id=?""";
+        try {
+            Post result = jdbc.queryForObject(query, postRowMapper, posId);
+            return Optional.ofNullable(result);
+        } catch (EmptyResultDataAccessException ignored) {
+            return Optional.empty();
+        }
     }
 
     @Override
     public void addLike(long postId) {
-        Post post = posts.get(postId);
-        post.setLikes(post.getLikes() + 1);
+        String query = """
+                UPDATE posts
+                SET likes=likes+1
+                WHERE id=?;
+                """;
+        jdbc.update(query, postId);
     }
 
     @Override
     public void deletePost(long postId) {
-        posts.remove(postId);
+        String query = "DELETE FROM posts WHERE id=?";
+        jdbc.update(query, postId);
     }
 
     @Override
     public long savePost(Post post) {
-        if (post.getId() != 0) {
-            post.setId(posts.size() + 1);
+        String query = """
+                UPDATE posts
+                SET name=?,
+                    text=?,
+                    picture=?,
+                    likes=?,
+                    comment_nums=?
+                WHERE id=?;
+                """;
+        Object[] params = {
+                post.getName(),
+                post.getText(),
+                post.getBase64Jpeg(),
+                post.getLikes(),
+                post.getCommentsNumber(),
+                post.getId()
+        };
+        long postId = jdbc.update(query, params);
+        if (postId == 0) {
+            throw new IllegalArgumentException("Data was not updated");
         }
-        posts.put(post.getId(), post);
-        return post.getId();
+        return postId;
+    }
+
+    @Override
+    public void updateNumberOfComments(long postId, long numberOfComments) {
+        String query = """
+                UPDATE posts
+                SET comment_nums=?
+                WHERE id=?;
+                """;
+        jdbc.update(query, numberOfComments, postId);
     }
 }

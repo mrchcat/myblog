@@ -30,6 +30,8 @@ public class PostMapper {
             }
         } catch (IOException e) {
         }
+        System.out.println("[" + base64Jpeg + "]");
+
         return Post.builder()
                 .name(newPostDto.getName())
                 .text(newPostDto.getText())

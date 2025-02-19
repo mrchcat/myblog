@@ -6,6 +6,8 @@ import com.github.mrchcat.myblog.tag.dto.TagDto;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class TagMapper {
     public static List<TagDto> toDto(List<Tag> tags) {
@@ -14,11 +16,13 @@ public class TagMapper {
                 .toList();
     }
 
-    public static List<String> toTagList(String tags) {
+    public static Set<String> toTagList(String tags) {
         if (tags.isEmpty()) {
-            return Collections.emptyList();
+            return Collections.emptySet();
         }
-        return Arrays.asList(tags.split("\\s*;\\s*"));
+        return Arrays.stream(tags.split("\\s*;\\s*"))
+                .filter(s -> !s.isBlank())
+                .collect(Collectors.toSet());
     }
 
 }

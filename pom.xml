@@ -22,7 +22,6 @@
         <logback.version>1.5.16</logback.version>
     </properties>
 
-
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -91,8 +90,6 @@
             <version>${logback.version}</version>
             <scope>compile</scope>
         </dependency>
-
-
     </dependencies>
     <build>
         <finalName>myblog</finalName>

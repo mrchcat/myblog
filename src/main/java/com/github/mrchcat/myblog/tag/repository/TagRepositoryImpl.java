@@ -36,30 +36,6 @@ public class TagRepositoryImpl implements TagRepository {
         return jdbc.query(query, tagRowMapper, postId);
     }
 
-//    @Override
-//    public List<Tag> saveTagsForPost(List<String> tagNames, long postId) {
-//        String getQueryByName = """
-//                SELECT id,name
-//                FROM tags AS t
-//                WHERE name=?
-//                """;
-//        List<Tag> result = new ArrayList<>();
-//        List<Tag> newTags = new ArrayList<>();
-//        Tag tag;
-//        for (String tagName : tagNames) {
-//            try {
-//                tag = jdbc.queryForObject(getQueryByName, tagRowMapper, tagName);
-//                result.add(tag);
-//            } catch (EmptyResultDataAccessException ignored) {
-//                tag = getTagById(insert(tagName));
-//                result.add(tag);
-//                newTags.add(tag);
-//            }
-//        }
-//        linkTagsToPost(newTags, postId);
-//        return result;
-//    }
-
     private void linkTagsToPost(List<Tag> tags, long postId) {
         String query = """
                 INSERT INTO poststags
@@ -73,49 +49,21 @@ public class TagRepositoryImpl implements TagRepository {
         jdbc.batchUpdate(query, params);
     }
 
-//    private Tag getTagById(long tagId) {
-//        String query = """
-//                SELECT id,name
-//                FROM tags
-//                WHERE id=?
-//                """;
-//        return jdbc.queryForObject(query, tagRowMapper, tagId);
-//    }
-
-//    private long insert(String tagName) {
-//        String insertQuery = """
-//                INSERT INTO tags(name)
-//                VALUES (?) ON CONFLICT (NAME) DO NOTHING
-//                """;
-//        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-//        jdbc.update(connection -> {
-//            PreparedStatement ps = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
-//            ps.setObject(1, tagName);
-//            return ps;
-//        }, keyHolder);
-//        Integer id = keyHolder.getKeyAs(Integer.class);
-//        if (id != null) {
-//            return id;
-//        } else {
-//            throw new InternalException("Data was not saved!");
-//        }
-//    }
-
-
     @Override
-    public void deleteUnusedTags(List<Long> tagIds) {
+    public void deleteSingleTagsOfPost(long postId) {
         String query = """
                 DELETE FROM tags
-                WHERE id=? AND NOT EXISTS
-                    (SELECT tag_id
-                    FROM poststags
-                    WHERE tag_id=?)
+                WHERE id IN (
+                	SELECT tag_id
+                	FROM poststags
+                	WHERE tag_id IN (
+                		SELECT tag_id FROM poststags WHERE post_id=?
+                	)
+                	GROUP BY tag_id
+                	HAVING COUNT(tag_id)<=1
+                )
                 """;
-        List<Object[]> params = new ArrayList<>();
-        for (long tagId : tagIds) {
-            params.add(new Object[]{tagId, tagId});
-        }
-        jdbc.batchUpdate(query, params);
+        jdbc.update(query, postId);
     }
 
     @Override

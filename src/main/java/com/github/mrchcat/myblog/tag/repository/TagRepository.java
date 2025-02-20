@@ -10,6 +10,6 @@ public interface TagRepository {
 
     public List<Tag> saveTagsForPost(Set<String> tagNames, long postId);
 
-    void deleteUnusedTags(List<Long> tagIds);
+    void deleteSingleTagsOfPost(long postId);
 
 }

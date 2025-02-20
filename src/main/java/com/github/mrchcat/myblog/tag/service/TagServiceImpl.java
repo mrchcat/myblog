@@ -29,4 +29,9 @@ public class TagServiceImpl implements TagService {
         List<Tag> tagList = tagRepository.saveTagsForPost(tagStringList, postId);
         return TagMapper.toDto(tagList);
     }
+
+    @Override
+    public void deleteSingleTagsOfPost(long posId) {
+        tagRepository.deleteSingleTagsOfPost(posId);
+    }
 }

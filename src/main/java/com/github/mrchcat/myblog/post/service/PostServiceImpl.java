@@ -41,6 +41,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deletePost(long postId) {
+        tagService.deleteSingleTagsOfPost(postId);
         postRepository.deletePost(postId);
     }
 
@@ -48,6 +49,8 @@ public class PostServiceImpl implements PostService {
     public PostDto editPost(long postId, NewPostDto newPostDto) {
         Post post = PostMapper.toPost(newPostDto);
         post.setId(postId);
+
+        tagService.deleteSingleTagsOfPost(postId);
         postRepository.savePost(post);
 
         PostDto postDto = PostMapper.toDto(post);

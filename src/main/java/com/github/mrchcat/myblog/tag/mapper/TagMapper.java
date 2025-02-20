@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class TagMapper {
     public static List<TagDto> toDto(List<Tag> tags) {
         return tags.stream()
-                .map(t -> new TagDto(t.getName()))
+                .map(t -> new TagDto(t.getId(), t.getName()))
                 .toList();
     }
 

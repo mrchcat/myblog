@@ -27,7 +27,8 @@
 <br>
 <b>Теги:</b>
 <th:block th:each="tagDto : ${postDto.tagsDto}">
-    <span th:text="${tagDto.name}+'; '">tag1</span>
+    <a th:href="@{/feed/tag/{tagId}(tagId=${tagDto.id})}" th:text="${tagDto.name}+'; '">tag</a>
+<!--    <span th:text="${tagDto.name}+'; '">tag1</span>-->
 </th:block>
 <br>
 <br>

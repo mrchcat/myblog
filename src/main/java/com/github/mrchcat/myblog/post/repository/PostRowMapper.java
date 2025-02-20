@@ -18,7 +18,7 @@ public class PostRowMapper implements RowMapper<Post> {
                 .text(rs.getString("text"))
                 .base64Jpeg(rs.getString("picture"))
                 .likes(rs.getLong("likes"))
-                .commentsNumber(rs.getLong("comment_nums"))
+                .commentCounter(rs.getLong("comment_counter"))
                 .build();
     }
 }

@@ -11,4 +11,8 @@ public interface CommentRepository {
     void deleteComment(long commentId);
 
     void addComment(NewCommentDto newCommentDto);
+
+    void incrementCommentCounter(long postId);
+
+    void decrementCommentCounter(long postId);
 }

@@ -18,9 +18,10 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public Optional<Post> getPost(long posId) {
         String query = """
-                SELECT id,name,text,picture,text,likes,comment_nums
+                SELECT id,name,text,picture,text,likes,comment_counter
                 FROM posts
-                WHERE id=?""";
+                WHERE id=?
+                """;
         try {
             Post result = jdbc.queryForObject(query, postRowMapper, posId);
             return Optional.ofNullable(result);
@@ -53,7 +54,7 @@ public class PostRepositoryImpl implements PostRepository {
                     text=?,
                     picture=?,
                     likes=?,
-                    comment_nums=?
+                    comment_counter=?
                 WHERE id=?;
                 """;
         Object[] params = {
@@ -61,7 +62,7 @@ public class PostRepositoryImpl implements PostRepository {
                 post.getText(),
                 post.getBase64Jpeg(),
                 post.getLikes(),
-                post.getCommentsNumber(),
+                post.getCommentCounter(),
                 post.getId()
         };
         long postId = jdbc.update(query, params);
@@ -69,15 +70,5 @@ public class PostRepositoryImpl implements PostRepository {
             throw new IllegalArgumentException("Data was not updated");
         }
         return postId;
-    }
-
-    @Override
-    public void updateNumberOfComments(long postId, long numberOfComments) {
-        String query = """
-                UPDATE posts
-                SET comment_nums=?
-                WHERE id=?;
-                """;
-        jdbc.update(query, numberOfComments, postId);
     }
 }

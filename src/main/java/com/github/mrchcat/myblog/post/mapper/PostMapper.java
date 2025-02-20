@@ -17,7 +17,7 @@ public class PostMapper {
                 .base64Jpeg(post.getBase64Jpeg())
                 .text(post.getText())
                 .likes(post.getLikes())
-                .commentsNumber(post.getCommentsNumber())
+                .commentCounter(post.getCommentCounter())
                 .build();
     }
 
@@ -37,7 +37,7 @@ public class PostMapper {
                 .text(newPostDto.getText())
                 .base64Jpeg(base64Jpeg)
                 .likes(0)
-                .commentsNumber(0)
+                .commentCounter(0)
                 .build();
     }
 }

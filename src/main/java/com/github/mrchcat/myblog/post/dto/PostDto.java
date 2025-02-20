@@ -17,7 +17,7 @@ public class PostDto {
     private String text;
     private String base64Jpeg;
     private long likes;
-    private long commentsNumber;
+    private long commentCounter;
     private List<CommentDto> commentsDto;
     private List<TagDto> tagsDto;
 }

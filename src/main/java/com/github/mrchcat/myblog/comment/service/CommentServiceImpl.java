@@ -5,6 +5,7 @@ import com.github.mrchcat.myblog.comment.dto.CommentDto;
 import com.github.mrchcat.myblog.comment.dto.NewCommentDto;
 import com.github.mrchcat.myblog.comment.mapper.CommentMapper;
 import com.github.mrchcat.myblog.comment.repository.CommentRepository;
+import com.github.mrchcat.myblog.post.service.PostService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,12 +26,14 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void deleteComment(long commentId) {
+    public void deleteComment(long commentId, long postId) {
         commentRepository.deleteComment(commentId);
+        commentRepository.decrementCommentCounter(postId);
     }
 
     @Override
-    public void addComment(NewCommentDto newCommentDto) {
+    public void addComment(NewCommentDto newCommentDto, long postId) {
         commentRepository.addComment(newCommentDto);
+        commentRepository.incrementCommentCounter(postId);
     }
 }

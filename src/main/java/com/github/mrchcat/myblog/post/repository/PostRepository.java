@@ -14,6 +14,4 @@ public interface PostRepository {
 
     void addLike(long postId);
 
-    void updateNumberOfComments(long postId, long numberOfComments);
-
 }

@@ -17,14 +17,14 @@ public class CommentController {
     @PostMapping(value = "post/{postId}/comment/{commentId}", params = "_method=delete")
     public String deleteComment(@PathVariable(value = "postId") long postId,
                                 @PathVariable(value = "commentId") long commentId) {
-        commentService.deleteComment(commentId);
+        commentService.deleteComment(commentId,postId);
         return "redirect:/post/" + postId;
     }
 
     @PostMapping(value = "post/{postId}/comment", params = "_method=add")
     public String addComment(@PathVariable(value = "postId") long postId,
                              @RequestParam("text") String text) {
-        commentService.addComment(new NewCommentDto(text, postId));
+        commentService.addComment(new NewCommentDto(text, postId), postId);
         return "redirect:/post/" + postId;
     }
 

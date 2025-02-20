@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS "posts" (
   "text" varchar(10000) NOT NULL,
   "picture" text,
   "likes" bigint NOT NULL,
-  "comment_nums" bigint NOT NULL
+  "comment_counter" bigint NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "comments" (

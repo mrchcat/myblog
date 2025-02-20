@@ -42,4 +42,25 @@ public class CommentRepositoryImpl implements CommentRepository {
                 """;
         jdbc.update(query, comment.getText(), comment.getPostId());
     }
+
+    @Override
+    public void incrementCommentCounter(long postId) {
+        String query = """
+                UPDATE posts
+                SET comment_counter=comment_counter+1
+                WHERE id=?;
+                """;
+        jdbc.update(query, postId);
+    }
+
+    @Override
+    public void decrementCommentCounter(long postId) {
+        String query = """
+                UPDATE posts
+                SET comment_counter=comment_counter-1
+                WHERE id=?;
+                """;
+        jdbc.update(query, postId);
+    }
+
 }

@@ -2,6 +2,9 @@ package com.github.mrchcat.myblog.post.service;
 
 import com.github.mrchcat.myblog.post.dto.NewPostDto;
 import com.github.mrchcat.myblog.post.dto.PostDto;
+import com.github.mrchcat.myblog.post.dto.ShortPostDto;
+
+import java.util.List;
 
 public interface PostService {
     PostDto getPostDto(long postId);
@@ -11,5 +14,7 @@ public interface PostService {
     void deletePost(long postId);
 
     PostDto editPost(long postId, NewPostDto newPostDto);
+
+    List<ShortPostDto> getFeed();
 
 }

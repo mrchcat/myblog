@@ -3,12 +3,16 @@ package com.github.mrchcat.myblog.post.mapper;
 import com.github.mrchcat.myblog.post.domain.Post;
 import com.github.mrchcat.myblog.post.dto.NewPostDto;
 import com.github.mrchcat.myblog.post.dto.PostDto;
+import com.github.mrchcat.myblog.post.dto.ShortPostDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.List;
 
 public class PostMapper {
+    private static final int POST_PREVIEW_LENGTH = 50;
+
 
     public static PostDto toDto(Post post) {
         return PostDto.builder()
@@ -39,5 +43,24 @@ public class PostMapper {
                 .likes(0)
                 .commentCounter(0)
                 .build();
+    }
+
+    public static ShortPostDto toShortDto(Post post) {
+        String text = post.getText();
+        String preview = (text.length() <= POST_PREVIEW_LENGTH) ? text : text.substring(0, POST_PREVIEW_LENGTH) + "...";
+        return ShortPostDto.builder()
+                .id(post.getId())
+                .name(post.getName())
+                .base64Jpeg(post.getBase64Jpeg())
+                .text(preview)
+                .likes(post.getLikes())
+                .commentCounter(post.getCommentCounter())
+                .build();
+    }
+
+    public static List<ShortPostDto> toShortDto(List<Post> posts) {
+        return posts.stream()
+                .map(PostMapper::toShortDto)
+                .toList();
     }
 }

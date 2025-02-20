@@ -5,6 +5,7 @@ import com.github.mrchcat.myblog.comment.service.CommentService;
 import com.github.mrchcat.myblog.post.domain.Post;
 import com.github.mrchcat.myblog.post.dto.NewPostDto;
 import com.github.mrchcat.myblog.post.dto.PostDto;
+import com.github.mrchcat.myblog.post.dto.ShortPostDto;
 import com.github.mrchcat.myblog.post.mapper.PostMapper;
 import com.github.mrchcat.myblog.post.repository.PostRepository;
 import com.github.mrchcat.myblog.tag.dto.TagDto;
@@ -66,5 +67,11 @@ public class PostServiceImpl implements PostService {
     private void addCommentToDto(PostDto postDto) {
         List<CommentDto> comments = commentService.getCommentsByPost(postDto.getId());
         postDto.setCommentsDto(comments);
+    }
+
+    @Override
+    public List<ShortPostDto> getFeed() {
+        List<Post> postList = postRepository.getFeed();
+        return PostMapper.toShortDto(postList);
     }
 }

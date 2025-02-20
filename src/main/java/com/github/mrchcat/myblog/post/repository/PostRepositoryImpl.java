@@ -6,6 +6,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -70,5 +71,14 @@ public class PostRepositoryImpl implements PostRepository {
             throw new IllegalArgumentException("Data was not updated");
         }
         return postId;
+    }
+
+    @Override
+    public List<Post> getFeed() {
+        String query = """
+                SELECT id,name,text,picture,text,likes,comment_counter
+                FROM posts
+                """;
+        return jdbc.query(query, postRowMapper);
     }
 }

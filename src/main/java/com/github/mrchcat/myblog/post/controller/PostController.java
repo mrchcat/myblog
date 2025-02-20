@@ -2,6 +2,7 @@ package com.github.mrchcat.myblog.post.controller;
 
 import com.github.mrchcat.myblog.post.dto.NewPostDto;
 import com.github.mrchcat.myblog.post.dto.PostDto;
+import com.github.mrchcat.myblog.post.dto.ShortPostDto;
 import com.github.mrchcat.myblog.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -12,11 +13,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
 
+    @GetMapping(value = {"/"})
+    public String redirectToFeed() {
+        return "redirect:feed";
+    }
 
     @GetMapping("/post/{postId}")
     public String getPost(@PathVariable(value = "postId") long postId, Model model) {
@@ -46,11 +53,6 @@ public class PostController {
         return "feed";
     }
 
-    private String name;
-    private MultipartFile image;
-    private String text;
-
-
     @PostMapping(value = "/post/{postId}")
     public String editPost(@PathVariable("postId") long postId,
                            @RequestParam("name") String name,
@@ -70,6 +72,13 @@ public class PostController {
         PostDto postDto = postService.editPost(postId, newPostDto);
         model.addAttribute("postDto", postDto);
         return "post";
+    }
+
+    @GetMapping(value = {"/feed/", "/feed"})
+    public String getFeed(Model model) {
+        List<ShortPostDto> newPostDtoList = postService.getFeed();
+        model.addAttribute("shortPostDto", newPostDtoList.getFirst());
+        return "feed";
     }
 
 }

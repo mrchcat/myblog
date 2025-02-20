@@ -2,9 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Лента постов</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <h1>Feed</h1>
+<h2>Лента постов</h2>
+<h3 th:text="${shortPostDto.name}">название поста</h3>
+<img th:src="'data:image/jpeg;base64,' + ${shortPostDto.base64Jpeg}" alt="Image" width="150">
+<section class="post-content" style="white-space: pre-line" th:text="${shortPostDto.text}">Текст поста</section>
+<br>
+<table>
+    <tr>
+        <td><img th:src="@{/images/heart.png}" width="30"></td>
+        <td th:text="${shortPostDto.likes}"></td>
+    </tr>
+</table>
+<br>
+<b>Теги:</b>
+<th:block th:each="tagDto : ${shortPostDto.tagsDto}">
+    <a th:href="@{/feed/tag/{tagId}(tagId=${tagDto.id})}" th:text="${tagDto.name}+'; '">tag</a>
+</th:block>
 </body>
 </html>

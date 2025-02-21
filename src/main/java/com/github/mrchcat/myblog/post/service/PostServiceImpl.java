@@ -35,12 +35,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<ShortPostDto> getFeed() {
-        Collection<Post> postList = postRepository.getFeed();
-        return PostMapper.toShortDto(postList);
-    }
-
-    @Override
     public void addLike(long postId) {
         postRepository.addLike(postId);
     }
@@ -62,7 +56,7 @@ public class PostServiceImpl implements PostService {
         tagService.saveTags(newPostDto.getTags(), postId);
 
         long updatedPostId = postRepository.updatePost(post);
-        Post updatedPost=postRepository.getPost(updatedPostId)
+        Post updatedPost = postRepository.getPost(updatedPostId)
                 .orElseThrow(() -> new NoSuchElementException("Post not found"));
         List<CommentDto> commentDtos = commentService.getCommentsByPost(updatedPostId);
         log.debug(updatedPost.toString());
@@ -70,12 +64,23 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public ShortPostDto addNewPost(NewPostDto newPostDto) {
+    public void addNewPost(NewPostDto newPostDto) {
         Post post = PostMapper.toPost(newPostDto);
         long savedPostId = postRepository.addNewPost(post);
+        log.info("СОхранен тег " + newPostDto.getTags() + "для id=" + savedPostId);
         tagService.saveTags(newPostDto.getTags(), savedPostId);
-        Post savedPost=postRepository.getPost(savedPostId)
-                .orElseThrow(() -> new NoSuchElementException("Post not found"));
-        return PostMapper.toShortDto(savedPost);
     }
+
+    @Override
+    public List<ShortPostDto> getFeedByTag(long tagId) {
+        Collection<Post> postList = postRepository.getFeedByTag(tagId);
+        return PostMapper.toShortDto(postList);
+    }
+
+    @Override
+    public List<ShortPostDto> getFeed() {
+        Collection<Post> postList = postRepository.getFeed();
+        return PostMapper.toShortDto(postList);
+    }
+
 }

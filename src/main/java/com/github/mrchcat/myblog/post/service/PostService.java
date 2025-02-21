@@ -11,11 +11,13 @@ public interface PostService {
 
     List<ShortPostDto> getFeed();
 
+    List<ShortPostDto> getFeedByTag(long tagId);
+
     PostDto editPost(long postId, NewPostDto newPostDto);
 
     void addLike(long postId);
 
     void deletePost(long postId);
 
-    ShortPostDto addNewPost(NewPostDto newPostDto);
+    void addNewPost(NewPostDto newPostDto);
 }

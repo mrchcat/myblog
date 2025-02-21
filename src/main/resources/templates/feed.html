@@ -6,21 +6,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-<h2>Лента постов</h2>
-<h3 th:text="${shortPostDto.name}">название поста</h3>
-<img th:src="'data:image/jpeg;base64,' + ${shortPostDto.base64Jpeg}" alt="Image" width="150">
-<section class="post-content" style="white-space: pre-line" th:text="${shortPostDto.text}">Текст поста</section>
-<br>
+<h2><u>Лента постов</u></h2>
 <table>
     <tr>
-        <td><img th:src="@{/images/heart.png}" width="30"></td>
-        <td th:text="${shortPostDto.likes}"></td>
+        <td>
+            <button type="submit" onclick="toggleForm()">add post</button>
+        <td>
     </tr>
 </table>
-<br>
-<b>Теги:</b>
-<th:block th:each="tagDto : ${shortPostDto.tagsDto}">
-    <a th:href="@{/feed/tag/{tagId}(tagId=${tagDto.id})}" th:text="${tagDto.name}+'; '">tag</a>
-</th:block>
+<div class="form-container" id="editPostForm" style="display:none">
+    <h2>Редактировать пост</h2>
+    <form th:action="@{/feed/post}" method="POST" enctype="multipart/form-data">
+        <table>
+            <tr>
+                <td><label for="name">Название поста:</label></td>
+                <td><input type="text" id="name" name="name" required style="width:800px;"></td>
+            </tr>
+            <tr>
+                <td>Изображение:</td>
+                <td><input id="imageDownload" type="file" name="image" accept="image/jpeg"></td>
+            </tr>
+            <tr>
+                <td><label for="text">Содержимое поста:</label></td>
+                <td><textarea id="text" name="text" required rows="5" cols="91"></textarea></td>
+            </tr>
+            <tr>
+                <td><label for="name">Введите теги через ";"</label></td>
+                <td><input type="text" id="tags" name="tags" required style="width:800px;"></td>
+            </tr>
+            <tr>
+                <td>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="submit">Save</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+
+<table th:each="shortPostDto : ${shortPostDtoList}">
+    <tr>
+        <td>
+            <h3>
+                <a th:href="@{/post/{postId}(postId=${shortPostDto.id})}" th:text="${shortPostDto.name}">Пост</a>
+            </h3>
+            <img th:src="'data:image/jpeg;base64,' + ${shortPostDto.base64Jpeg}" alt="Image" width="150">
+            <section class="post-content" style="white-space: pre-line" th:text="${shortPostDto.text}">Текст поста
+            </section>
+            <br>
+            <table>
+                <tr>
+                    <td><img th:src="@{/images/heart.png}" width="30"></td>
+                    <td th:text="${shortPostDto.likes}"></td>
+                    <td><img th:src="@{/images/comment.png}" width="30"></td>
+                    <td th:text="${shortPostDto.commentCounter}"></td>
+
+                </tr>
+            </table>
+            <br>
+            <b>Теги:</b>
+            <th:block th:each="tagDto : ${shortPostDto.tagsDto}">
+                <a th:href="@{/feed/tag/{tagId}(tagId=${tagDto.id})}" th:text="${tagDto.name}">tag</a>
+                &nbsp
+            </th:block>
+            <hr>
+        </td>
+    </tr>
+</table>
+
+<script>
+    function toggleForm() {
+        const form = document.getElementById('editPostForm');
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+</script>
+
 </body>
 </html>

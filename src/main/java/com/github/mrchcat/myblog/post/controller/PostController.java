@@ -53,7 +53,7 @@ public class PostController {
         return "feed";
     }
 
-    @PostMapping(value = "/post/{postId}")
+    @PostMapping("/post/{postId}")
     public String editPost(@PathVariable("postId") long postId,
                            @RequestParam("name") String name,
                            @RequestParam("image") MultipartFile image,
@@ -76,9 +76,33 @@ public class PostController {
 
     @GetMapping(value = {"/feed/", "/feed"})
     public String getFeed(Model model) {
-        List<ShortPostDto> newPostDtoList = postService.getFeed();
-        model.addAttribute("shortPostDto", newPostDtoList.getFirst());
+        List<ShortPostDto> shortPostDtoList = postService.getFeed();
+        model.addAttribute("shortPostDtoList", shortPostDtoList);
         return "feed";
     }
+
+    @GetMapping("/feed/tag/{tagId}")
+    public String getFeedByTag(@PathVariable("tagId") long tagId, Model model) {
+        List<ShortPostDto> shortPostDtoList = postService.getFeedByTag(tagId);
+        model.addAttribute("shortPostDtoList", shortPostDtoList);
+        return "feed";
+    }
+
+    @PostMapping("/feed/post")
+    public String addNewPost(@RequestParam("name") String name,
+                             @RequestParam("image") MultipartFile image,
+                             @RequestParam("text") String text,
+                             @RequestParam("tags") String tags,
+                             Model model) {
+        NewPostDto newPostDto = NewPostDto.builder()
+                .name(name)
+                .image(image)
+                .text(text)
+                .tags(tags)
+                .build();
+        postService.addNewPost(newPostDto);
+        return "redirect:/feed";
+    }
+
 
 }

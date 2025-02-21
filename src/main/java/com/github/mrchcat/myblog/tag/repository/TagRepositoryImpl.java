@@ -2,6 +2,7 @@ package com.github.mrchcat.myblog.tag.repository;
 
 import com.github.mrchcat.myblog.tag.domain.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +14,7 @@ import static java.util.Collections.nCopies;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class TagRepositoryImpl implements TagRepository {
     private final JdbcTemplate jdbc;
     private final TagRowMapper tagRowMapper;
@@ -26,6 +28,7 @@ public class TagRepositoryImpl implements TagRepository {
         List<Object[]> params = new ArrayList<>();
         for (Tag tag : tags) {
             params.add(new Object[]{postId, tag.getId()});
+            log.info("запрос с параметрами postId=" + postId + "  tag.getId()=" + tag.getId());
         }
         jdbc.batchUpdate(query, params);
     }
@@ -71,11 +74,11 @@ public class TagRepositoryImpl implements TagRepository {
 
     @Override
     public void unlinkTagsFromPost(long postId) {
-        String query= """
+        String query = """
                 DELETE
                 FROM poststags
                 WHERE post_id=?
                 """;
-        jdbc.update(query,postId);
+        jdbc.update(query, postId);
     }
 }

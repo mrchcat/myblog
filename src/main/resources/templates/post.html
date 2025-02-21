@@ -37,6 +37,7 @@
         <td>
             <button type="submit" onclick="toggleForm()">edit post</button>
         <td>
+        <td>
             <form th:action="@{/post/{id}(id=${postDto.id})}" method="post" style="display:inline;">
                 <input type="hidden" name="_method" value="delete"/>
                 <button type="submit">delete post</button>

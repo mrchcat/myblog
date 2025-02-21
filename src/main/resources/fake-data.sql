@@ -109,3 +109,144 @@ VALUES ('postName22','postContent22',1,1);
 
 INSERT INTO posts(name,text,likes,comment_counter)
 VALUES ('postName23','postContent23',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName24','postContent1',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName25','postContent2',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName26','postContent3',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName27','postContent4',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName28','postContent5',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName29','postContent6',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName30','postContent7',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName31','postContent8',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName32','postContent9',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName33','postContent10',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName34','postContent11',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName35','postContent12',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName36','postContent13',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName37','postContent14',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName38','postContent15',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName39','postContent16',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName40','postContent17',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName41','postContent18',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName42','postContent19',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName43','postContent20',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName44','postContent21',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName45','postContent22',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName46','postContent23',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName47','postContent1',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName48','postContent2',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName49','postContent3',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName50','postContent4',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName51','postContent5',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName52','postContent6',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName53','postContent7',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName54','postContent8',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName55','postContent9',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName56','postContent10',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName57','postContent11',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName58','postContent12',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName59','postContent13',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName60','postContent14',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName61','postContent15',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName62','postContent16',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName63','postContent17',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName64','postContent18',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName65','postContent19',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName66','postContent20',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName67','postContent21',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName68','postContent21',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName69','postContent21',1,1);
+
+INSERT INTO posts(name,text,likes,comment_counter)
+VALUES ('postName70','postContent21',1,1);

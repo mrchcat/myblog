@@ -2,6 +2,7 @@ package com.github.mrchcat.myblog.post.repository;
 
 import com.github.mrchcat.myblog.post.domain.Post;
 import com.github.mrchcat.myblog.post.dto.ShortPostDto;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collection;
 import java.util.List;
@@ -11,6 +12,10 @@ public interface PostRepository {
     Optional<Post> getPost(long postId);
 
     Collection<Post> getFeed();
+
+    Collection<Post> getFeed(Pageable pageable);
+
+    long getTotal();
 
     Collection<Post> getFeedByTag(long tagId);
 

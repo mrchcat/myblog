@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-<h3><span th:text="${postDto.name}">название поста</span></h3>
+<h2><span th:text="${postDto.name}">название поста</span></h2>
 <img th:src="'data:image/jpeg;base64,' + ${postDto.base64Jpeg}" alt="Image" width="150">
 <h3>Содержание поста</h3>
 <section class="post-content" style="white-space: pre-line" th:text="${postDto.text}">Текст поста</section>
@@ -27,8 +27,8 @@
 <br>
 <b>Теги:</b>
 <th:block th:each="tagDto : ${postDto.tagsDto}">
-    <a th:href="@{/feed/tag/{tagId}(tagId=${tagDto.id})}" th:text="${tagDto.name}+'; '">tag</a>
-<!--    <span th:text="${tagDto.name}+'; '">tag1</span>-->
+    <a th:href="@{/feed/tag/{tagId}(tagId=${tagDto.id})}" th:text="${tagDto.name}">tag</a>
+    &nbsp
 </th:block>
 <br>
 <br>
@@ -79,7 +79,7 @@
     </form>
 </div>
 <br>
-<h4>Комментарии:</h4>
+<h3>Комментарии:</h3>
 <table>
     <tr th:each="comment : ${postDto.commentsDto}">
         <td>

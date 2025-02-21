@@ -11,6 +11,9 @@ import com.github.mrchcat.myblog.post.repository.PostRepository;
 import com.github.mrchcat.myblog.tag.service.TagService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -83,4 +86,15 @@ public class PostServiceImpl implements PostService {
         return PostMapper.toShortDto(postList);
     }
 
+    @Override
+    public Page<ShortPostDto> getFeed(Pageable pageable) {
+        Collection<Post> postList = postRepository.getFeed(pageable);
+        List<ShortPostDto> listDto = PostMapper.toShortDto(postList);
+        long totalPosts = postRepository.getTotal();
+        Page<ShortPostDto> postPage = new PageImpl<ShortPostDto>(listDto, pageable, totalPosts);
+        log.info("totalPosts=" + totalPosts + " ; TotalPages()="
+                + postPage.getTotalPages() + " getNumber()="
+                + postPage.getNumber());
+        return postPage;
+    }
 }

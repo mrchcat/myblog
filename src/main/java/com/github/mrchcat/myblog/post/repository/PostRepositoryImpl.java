@@ -4,19 +4,16 @@ import com.github.mrchcat.myblog.post.domain.Post;
 import com.sun.jdi.InternalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -36,7 +33,9 @@ public class PostRepositoryImpl implements PostRepository {
                 """;
         try {
             Collection<Post> result = jdbc.query(query, postResultSetExtractor, postId);
-            if (result == null || result.isEmpty()) {
+            if (result == null) {
+                throw new InternalException("Запрос вернул null");
+            } else if (result.isEmpty()) {
                 return Optional.empty();
             }
             return Optional.ofNullable(result.iterator().next());
@@ -75,21 +74,20 @@ public class PostRepositoryImpl implements PostRepository {
                 """;
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(connection -> {
-            PreparedStatement ps=connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1,post.getName());
-            ps.setString(2,post.getText());
-            ps.setString(3,post.getBase64Jpeg());
-            ps.setLong(4,post.getLikes());
-            ps.setLong(5,post.getCommentCounter());
-            ps.setLong(6,post.getId());
+            PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, post.getName());
+            ps.setString(2, post.getText());
+            ps.setString(3, post.getBase64Jpeg());
+            ps.setLong(4, post.getLikes());
+            ps.setLong(5, post.getCommentCounter());
+            ps.setLong(6, post.getId());
             return ps;
         }, keyHolder);
-        Number key=keyHolder.getKey();
-        if(key!=null){
-            return key.longValue();
-        } else {
+        Number key = keyHolder.getKey();
+        if (key == null) {
             throw new InternalException("Пост не добавлен");
         }
+        return key.longValue();
     }
 
     @Override
@@ -101,20 +99,19 @@ public class PostRepositoryImpl implements PostRepository {
                 """;
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(connection -> {
-            PreparedStatement ps=connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1,post.getName());
-            ps.setString(2,post.getText());
-            ps.setString(3,post.getBase64Jpeg());
-            ps.setLong(4,post.getLikes());
-            ps.setLong(5,post.getCommentCounter());
+            PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, post.getName());
+            ps.setString(2, post.getText());
+            ps.setString(3, post.getBase64Jpeg());
+            ps.setLong(4, post.getLikes());
+            ps.setLong(5, post.getCommentCounter());
             return ps;
         }, keyHolder);
-        Number key=keyHolder.getKey();
-        if(key!=null){
-            return key.longValue();
-        } else {
+        Number key = keyHolder.getKey();
+        if (key == null) {
             throw new InternalException("Пост не добавлен");
         }
+        return key.longValue();
     }
 
     @Override
@@ -134,7 +131,7 @@ public class PostRepositoryImpl implements PostRepository {
         try {
             Collection<Post> posts = jdbc.query(query, postResultSetExtractor, tagId);
             if (posts == null) {
-                return Collections.emptyList();
+                throw new InternalException("Запрос вернул null");
             }
             return posts;
         } catch (EmptyResultDataAccessException ignored) {
@@ -153,7 +150,7 @@ public class PostRepositoryImpl implements PostRepository {
         try {
             Collection<Post> posts = jdbc.query(query, postResultSetExtractor);
             if (posts == null) {
-                return Collections.emptyList();
+                throw new InternalException("Запрос вернул null");
             }
             return posts;
         } catch (EmptyResultDataAccessException ignored) {
@@ -161,5 +158,40 @@ public class PostRepositoryImpl implements PostRepository {
         }
     }
 
+    @Override
+    public Collection<Post> getFeed(Pageable pageable) {
+        String query = """
+                SELECT p.id,p.name,text,picture,p.likes,p.comment_counter, pt.tag_id, t.name AS tag_name
+                FROM posts AS p
+                LEFT JOIN  poststags AS pt ON p.id=pt.post_id
+                LEFT JOIN tags AS t ON t.id=pt.tag_id
+                WHERE p.id IN (
+                    SELECT id
+                    FROM posts
+                    WHERE id>?
+                    ORDER BY id ASC
+                    LIMIT ?)
+                """;
+        int pageSize = pageable.getPageSize();
+        long minId = (long) pageable.getPageNumber() * pageSize;
+        Object[] params = {minId, pageSize};
+        try {
+            Collection<Post> posts = jdbc.query(query, postResultSetExtractor, params);
+            if (posts == null) {
+                throw new InternalException("Запрос вернул null");
+            }
+            return posts;
+        } catch (EmptyResultDataAccessException ignored) {
+            return Collections.emptyList();
+        }
+    }
 
+    @Override
+    public long getTotal() {
+        Long total = jdbc.queryForObject("SELECT COUNT(id) FROM posts", Long.class);
+        if (total == null) {
+            throw new InternalException("Запрос вернул null");
+        }
+        return total;
+    }
 }

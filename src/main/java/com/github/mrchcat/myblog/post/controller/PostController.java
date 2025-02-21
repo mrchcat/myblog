@@ -5,6 +5,10 @@ import com.github.mrchcat.myblog.post.dto.PostDto;
 import com.github.mrchcat.myblog.post.dto.ShortPostDto;
 import com.github.mrchcat.myblog.post.service.PostService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class PostController {
     private final PostService postService;
 
@@ -74,10 +80,23 @@ public class PostController {
         return "post";
     }
 
-    @GetMapping(value = {"/feed/", "/feed"})
-    public String getFeed(Model model) {
-        List<ShortPostDto> shortPostDtoList = postService.getFeed();
-        model.addAttribute("shortPostDtoList", shortPostDtoList);
+    @GetMapping(value = {"/feed/","/feed"})
+    public String getFeed(@RequestParam(value = "page", defaultValue = "0") Integer currentPage,
+                          @RequestParam(value = "size", defaultValue = "10") Integer pageSize,
+                          Model model) {
+
+        Pageable pageable = PageRequest.of(currentPage, pageSize);
+        Page<ShortPostDto> postPage = postService.getFeed(pageable);
+        model.addAttribute("postPage", postPage);
+
+        int totalPages = postPage.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream
+                    .rangeClosed(1, totalPages)
+                    .boxed()
+                    .toList();
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
         return "feed";
     }
 
@@ -103,6 +122,4 @@ public class PostController {
         postService.addNewPost(newPostDto);
         return "redirect:/feed";
     }
-
-
 }

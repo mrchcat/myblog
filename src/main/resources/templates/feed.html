@@ -4,7 +4,60 @@
     <meta charset="UTF-8">
     <title>Лента постов</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .disabled {
+         pointer-events: none; /* Отключим взаимодействие мыши */
+         color: #808080; /* Установим серый цвет как индикатор недоступности */
+         text-decoration: none; /* Уберем подчёркивание */
+         cursor: default; /* Выберем стандартный курсор */
+         opacity: 0.6; /* Добавим полупрозрачность для создания эффекта затухания */
+        }
+
+        form {
+          margin:auto;/* nice thing of auto margin if display:flex; it center both horizontal and vertical :) */
+        }
+
+
+        nav {
+          border-top: 1px solid #eee;
+          margin-top: 1em;
+          padding-top: 0.5em;
+          font: 0.9em sans-serif;
+          display: flex;
+          justify-content: center;
+        }
+
+        .pagination {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+          display: flex;
+        }
+
+        .pagination li {
+          margin: 0 1px;
+        }
+
+        .pagination a {
+          display: block;
+          padding: 0.5em 1em;
+          border: 1px solid #999;
+          border-radius: 0.2em;
+        }
+
+        .center-screen {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+          font: 1.1em sans-serif;
+          min-height: 5vh;
+        }
+
+    </style>
 </head>
+
 <body>
 <h2><u>Лента постов</u></h2>
 <table>
@@ -49,7 +102,7 @@
 </div>
 
 
-<table th:each="shortPostDto : ${shortPostDtoList}">
+<table th:each="shortPostDto : ${postPage.content}">
     <tr>
         <td>
             <h3>
@@ -78,6 +131,45 @@
         </td>
     </tr>
 </table>
+<br>
+
+<nav aria-label="Page navigation">`
+    <ul class="pagination">
+        <li class="page-item">
+            <a th:href="@{/feed(page='0')}" th:classappend="${postPage.number == 0 ? 'disabled' : ''}">First</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" th:href="@{/feed(page=${postPage.number - 1})}"
+               th:classappend="${postPage.number == 0 ? 'disabled' : ''}">Previous</a>
+        </li>
+        <li class="page-item" th:each="i : ${#numbers.sequence(0, postPage.totalPages - 1)}"
+        >
+            <a class="page-link" th:href="@{/feed(page=${i})}" th:text="${i + 1}"
+               th:classappend="${postPage.number == i ? 'disabled' : ''}"></a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" th:href="@{/feed(page=${postPage.number + 1})}"
+               th:classappend="${postPage.number == postPage.totalPages - 1 ? 'disabled' : ''}">Next</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" th:href="@{/feed(page=${postPage.totalPages - 1})}"
+               th:classappend="${postPage.number == postPage.totalPages - 1 ? 'disabled' : ''}">Last</a>
+        </li>
+    </ul>
+</nav>
+
+<div class="center-screen">
+    <form>
+        <label>
+            <select name="pages" size="1">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="30">50</option>
+            </select>
+        </label>
+        <input type="submit" value="Страниц">
+    </form>
+</div>
 
 <script>
     function toggleForm() {

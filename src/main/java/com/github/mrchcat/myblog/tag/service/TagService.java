@@ -1,13 +1,15 @@
 package com.github.mrchcat.myblog.tag.service;
 
-import com.github.mrchcat.myblog.tag.dto.TagDto;
+import com.github.mrchcat.myblog.tag.domain.Tag;
 
 import java.util.List;
 
 public interface TagService {
-    List<TagDto> getAllTagsByPost(long postId);
 
-    List<TagDto> saveTags(String tags, long posId);
+    List<Tag> saveTags(String tagsAsLine, long posId);
 
     void deleteSingleTagsOfPost(long posId);
+
+    void unlinkTagsFromPost(long postId);
+
 }

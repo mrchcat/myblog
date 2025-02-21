@@ -1,6 +1,5 @@
 package com.github.mrchcat.myblog.post.dto;
 
-import com.github.mrchcat.myblog.comment.dto.CommentDto;
 import com.github.mrchcat.myblog.tag.dto.TagDto;
 import lombok.Builder;
 import lombok.Getter;

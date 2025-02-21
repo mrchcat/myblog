@@ -6,10 +6,11 @@ import java.util.List;
 import java.util.Set;
 
 public interface TagRepository {
-    List<Tag> getAllTagsByPost(long postId);
 
     public List<Tag> saveTagsForPost(Set<String> tagNames, long postId);
 
     void deleteSingleTagsOfPost(long postId);
+
+    void unlinkTagsFromPost(long postId);
 
 }

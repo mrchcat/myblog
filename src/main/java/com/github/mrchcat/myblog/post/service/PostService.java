@@ -9,12 +9,13 @@ import java.util.List;
 public interface PostService {
     PostDto getPostDto(long postId);
 
+    List<ShortPostDto> getFeed();
+
+    PostDto editPost(long postId, NewPostDto newPostDto);
+
     void addLike(long postId);
 
     void deletePost(long postId);
 
-    PostDto editPost(long postId, NewPostDto newPostDto);
-
-    List<ShortPostDto> getFeed();
-
+    ShortPostDto addNewPost(NewPostDto newPostDto);
 }

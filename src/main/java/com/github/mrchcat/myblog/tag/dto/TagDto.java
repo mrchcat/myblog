@@ -6,6 +6,6 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class TagDto {
-    long id;
-    String name;
+    private long id;
+    private String name;
 }

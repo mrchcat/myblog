@@ -1,20 +1,12 @@
 package com.github.mrchcat.myblog.tag.repository;
 
-import com.github.mrchcat.myblog.post.domain.Post;
 import com.github.mrchcat.myblog.tag.domain.Tag;
-import com.sun.jdi.InternalException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Collections.nCopies;
@@ -24,17 +16,6 @@ import static java.util.Collections.nCopies;
 public class TagRepositoryImpl implements TagRepository {
     private final JdbcTemplate jdbc;
     private final TagRowMapper tagRowMapper;
-
-    @Override
-    public List<Tag> getAllTagsByPost(long postId) {
-        String query = """
-                SELECT id,name
-                FROM tags AS t
-                JOIN poststags AS pt ON t.id=pt.tag_id
-                WHERE pt.post_id=?
-                """;
-        return jdbc.query(query, tagRowMapper, postId);
-    }
 
     private void linkTagsToPost(List<Tag> tags, long postId) {
         String query = """
@@ -86,5 +67,15 @@ public class TagRepositoryImpl implements TagRepository {
         List<Tag> tags = jdbc.query(String.format(getQuery, inSql), tagRowMapper, tagNames.toArray());
         linkTagsToPost(tags, postId);
         return tags;
+    }
+
+    @Override
+    public void unlinkTagsFromPost(long postId) {
+        String query= """
+                DELETE
+                FROM poststags
+                WHERE post_id=?
+                """;
+        jdbc.update(query,postId);
     }
 }

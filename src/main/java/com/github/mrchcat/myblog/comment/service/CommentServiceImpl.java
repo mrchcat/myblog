@@ -5,8 +5,6 @@ import com.github.mrchcat.myblog.comment.dto.CommentDto;
 import com.github.mrchcat.myblog.comment.dto.NewCommentDto;
 import com.github.mrchcat.myblog.comment.mapper.CommentMapper;
 import com.github.mrchcat.myblog.comment.repository.CommentRepository;
-import com.github.mrchcat.myblog.post.service.PostService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

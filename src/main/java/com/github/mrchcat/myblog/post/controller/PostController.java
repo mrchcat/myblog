@@ -5,7 +5,6 @@ import com.github.mrchcat.myblog.post.dto.PostDto;
 import com.github.mrchcat.myblog.post.dto.ShortPostDto;
 import com.github.mrchcat.myblog.post.service.PostService;
 import com.github.mrchcat.myblog.tag.dto.TagDto;
-import com.github.mrchcat.myblog.tag.service.TagService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,8 +26,6 @@ import java.util.NoSuchElementException;
 @Slf4j
 public class PostController {
     private final PostService postService;
-    private final TagService tagService;
-
 
     @GetMapping(value = {"/"})
     public String redirectToFeed() {
@@ -68,8 +65,7 @@ public class PostController {
     public String addNewPost(@RequestParam("name") String name,
                              @RequestParam("image") MultipartFile image,
                              @RequestParam("text") String text,
-                             @RequestParam("tags") String tags,
-                             Model model) {
+                             @RequestParam("tags") String tags) {
         NewPostDto newPostDto = NewPostDto.builder()
                 .name(name)
                 .image(image)

@@ -114,31 +114,7 @@ public class PostRepositoryImpl implements PostRepository {
         return key.longValue();
     }
 
-    public Collection<Post> getFeedByTag(long tagId) {
-        String query = """
-                SELECT p.id,p.name,text,picture,p.likes,p.comment_counter, pt.tag_id, t.name AS tag_name
-                FROM posts AS p
-                LEFT JOIN  poststags AS pt ON p.id=pt.post_id
-                LEFT JOIN tags AS t ON t.id=pt.tag_id
-                WHERE p.id IN (
-                	SELECT p.id
-                	FROM tags AS t
-                	JOIN poststags AS pt ON t.id=pt.tag_id
-                	JOIN posts AS p ON p.id=pt.post_id
-                	WHERE t.id=?)
-                """;
-        try {
-            Collection<Post> posts = jdbc.query(query, postResultSetExtractor, tagId);
-            if (posts == null) {
-                throw new InternalException("Запрос вернул null");
-            }
-            return posts;
-        } catch (EmptyResultDataAccessException ignored) {
-            return Collections.emptyList();
-        }
-    }
-
-    @Override
+     @Override
     public Collection<Post> getFeed(Pageable pageable) {
         String query = """
                 SELECT p.id,p.name,text,picture,p.likes,p.comment_counter, pt.tag_id, t.name AS tag_name

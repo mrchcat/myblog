@@ -2,8 +2,6 @@ package com.github.mrchcat.myblog.post.repository;
 
 import com.github.mrchcat.myblog.post.domain.Post;
 import com.github.mrchcat.myblog.tag.domain.Tag;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
@@ -16,8 +14,6 @@ import java.util.HashSet;
 
 @Component
 public class PostResultSetExtractor implements ResultSetExtractor<Collection<Post>> {
-
-    private static final Logger log = LoggerFactory.getLogger(PostResultSetExtractor.class);
 
     @Override
     public Collection<Post> extractData(ResultSet rs) throws SQLException, DataAccessException {

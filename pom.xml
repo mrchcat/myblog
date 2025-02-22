@@ -40,7 +40,6 @@
             <scope>test</scope>
         </dependency>
 
-
         <dependency>
             <groupId>org.thymeleaf</groupId>
             <artifactId>thymeleaf</artifactId>
@@ -93,5 +92,13 @@
     </dependencies>
     <build>
         <finalName>myblog</finalName>
+        <plugins>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
+            </plugin>
+        </plugins>
     </build>
+
+
 </project>

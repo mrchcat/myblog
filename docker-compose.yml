@@ -1,0 +1,38 @@
+services:
+  myblog-database:
+    image: postgres:17.4
+    container_name: postgres
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_DB=myblog
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Inushing1980
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+    networks:
+      - backend
+
+  myblog-service:
+    build: ./
+    image: myblogservice
+    container_name: myblogservice
+    ports:
+      - "8080:8080"
+    depends_on:
+      myblog-database:
+        condition: service_healthy
+    environment:
+      - DATASOURCE_URL=jdbc:postgresql://myblog:5432/myblog-service
+      - DATASOURCE_USERNAME=postgres
+      - DATASOURCE_PASSWORD=Inushing1980
+      - DATASOURCE_DRIVER=org.postgresql.Driver
+      - POST_PREVIEW_LENGTH=100
+    networks:
+      - backend
+
+networks:
+  backend:

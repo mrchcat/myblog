@@ -5,9 +5,9 @@ services:
     ports:
       - "5435:5432"
     environment:
-      - POSTGRES_DB=myblog
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=Inushing1980
+      - POSTGRES_DB=myblogdb
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=12345
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
@@ -26,9 +26,9 @@ services:
       myblog-database:
         condition: service_healthy
     environment:
-      - DATASOURCE_URL=jdbc:postgresql://myblog:5432/myblog-service
-      - DATASOURCE_USERNAME=postgres
-      - DATASOURCE_PASSWORD=Inushing1980
+      - DATASOURCE_URL=jdbc:postgresql://myblog-database:5432/myblogdb
+      - DATASOURCE_USERNAME=user
+      - DATASOURCE_PASSWORD=12345
       - DATASOURCE_DRIVER=org.postgresql.Driver
       - POST_PREVIEW_LENGTH=100
     networks:

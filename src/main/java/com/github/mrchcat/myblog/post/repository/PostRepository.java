@@ -11,13 +11,13 @@ import java.util.Optional;
 public interface PostRepository {
     Optional<Post> getPost(long postId);
 
-    Collection<Post> getFeed();
-
     Collection<Post> getFeed(Pageable pageable);
+
+    Collection<Post> getFeedByTag(long tagId, Pageable pageable);
 
     long getTotal();
 
-    Collection<Post> getFeedByTag(long tagId);
+    long getTotalByTag(long tagId);
 
     long addNewPost(Post post);
 

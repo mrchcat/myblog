@@ -14,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -114,7 +115,6 @@ public class PostRepositoryImpl implements PostRepository {
         return key.longValue();
     }
 
-    @Override
     public Collection<Post> getFeedByTag(long tagId) {
         String query = """
                 SELECT p.id,p.name,text,picture,p.likes,p.comment_counter, pt.tag_id, t.name AS tag_name
@@ -139,26 +139,7 @@ public class PostRepositoryImpl implements PostRepository {
         }
     }
 
-    @Override
-    public Collection<Post> getFeed() {
-        String query = """
-                SELECT p.id,p.name,text,picture,p.likes,p.comment_counter, pt.tag_id, t.name AS tag_name
-                FROM posts AS p
-                LEFT JOIN  poststags AS pt ON p.id=pt.post_id
-                LEFT JOIN tags AS t ON t.id=pt.tag_id
-                """;
-        try {
-            Collection<Post> posts = jdbc.query(query, postResultSetExtractor);
-            if (posts == null) {
-                throw new InternalException("Запрос вернул null");
-            }
-            return posts;
-        } catch (EmptyResultDataAccessException ignored) {
-            return Collections.emptyList();
-        }
-    }
-
-    @Override
+     @Override
     public Collection<Post> getFeed(Pageable pageable) {
         String query = """
                 SELECT p.id,p.name,text,picture,p.likes,p.comment_counter, pt.tag_id, t.name AS tag_name
@@ -173,8 +154,8 @@ public class PostRepositoryImpl implements PostRepository {
                     LIMIT ?)
                 """;
         int pageSize = pageable.getPageSize();
-        long minId = (long) pageable.getPageNumber() * pageSize;
-        Object[] params = {minId, pageSize};
+        long minPostId = (long) pageable.getPageNumber() * pageSize;
+        Object[] params = {minPostId, pageSize};
         try {
             Collection<Post> posts = jdbc.query(query, postResultSetExtractor, params);
             if (posts == null) {
@@ -187,8 +168,55 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
+    public Collection<Post> getFeedByTag(long tagId, Pageable pageable) {
+        String query = """
+                SELECT p.id,p.name,text,picture,p.likes,p.comment_counter, pt.tag_id, t.name AS tag_name
+                FROM posts AS p
+                LEFT JOIN  poststags AS pt ON p.id=pt.post_id
+                LEFT JOIN tags AS t ON t.id=pt.tag_id
+                WHERE p.id IN (
+                	SELECT p.id
+                	FROM tags AS t
+                	JOIN poststags AS pt ON t.id=pt.tag_id
+                	JOIN posts AS p ON p.id=pt.post_id
+                	WHERE t.id=? AND p.id>?
+                    ORDER BY id ASC
+                    LIMIT ?)
+                """;
+        int pageSize = pageable.getPageSize();
+        long minPostId = (long) pageable.getPageNumber() * pageSize;
+        Object[] params = {tagId,minPostId, pageSize};
+        try {
+            Collection<Post> posts = jdbc.query(query, postResultSetExtractor, params);
+            if (posts == null) {
+                throw new InternalException("Запрос вернул null");
+            }
+            return posts;
+        } catch (EmptyResultDataAccessException ignored) {
+            return Collections.emptyList();
+        }
+    }
+
+
+
+    @Override
     public long getTotal() {
         Long total = jdbc.queryForObject("SELECT COUNT(id) FROM posts", Long.class);
+        if (total == null) {
+            throw new InternalException("Запрос вернул null");
+        }
+        return total;
+    }
+
+    @Override
+    public long getTotalByTag(long tagId) {
+        String query= """
+                SELECT COUNT(p.id)
+                FROM posts AS p
+                JOIN poststags AS pt ON p.id=pt.post_id
+                WHERE tag_id=?
+                """;
+        Long total = jdbc.queryForObject(query, Long.class,tagId);
         if (total == null) {
             throw new InternalException("Запрос вернул null");
         }

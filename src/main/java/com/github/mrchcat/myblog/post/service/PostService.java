@@ -11,11 +11,9 @@ import java.util.List;
 public interface PostService {
     PostDto getPostDto(long postId);
 
-    List<ShortPostDto> getFeed();
-
     Page<ShortPostDto> getFeed(Pageable pageable);
 
-    List<ShortPostDto> getFeedByTag(long tagId);
+    Page<ShortPostDto> getFeedByTag(long tagId, Pageable pageable);
 
     PostDto editPost(long postId, NewPostDto newPostDto);
 

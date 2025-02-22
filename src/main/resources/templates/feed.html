@@ -57,7 +57,22 @@
 </head>
 
 <body>
-<h2><u>Лента постов</u></h2>
+<table>
+    <tr>
+        <td>
+            <h2><u>Лента постов</u>
+                <span th:if="${isFiltered}" th:text="': '+${tagFilter.name}"> </span>
+            </h2>
+        </td>
+        <td>
+            <div th:switch="${isFiltered}">
+                <div th:case="true">
+                    <a th:href="@{/feed}">Clear filter</a>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
 <table>
     <tr>
         <td>
@@ -122,7 +137,7 @@
             <br>
             <b>Теги:</b>
             <th:block th:each="tagDto : ${shortPostDto.tagsDto}">
-                <a th:href="@{/feed/tag/{tagId}(tagId=${tagDto.id})}" th:text="${tagDto.name}">tag</a>
+                <a th:href="@{/feed(tagFilter=${tagDto.id})}" th:text="${tagDto.name}">tag</a>
                 &nbsp
             </th:block>
             <hr>
@@ -130,36 +145,72 @@
     </tr>
 </table>
 <br>
-
-<nav aria-label="Page navigation">`
-    <ul class="pagination">
-        <li class="page-item">
-            <a th:href="@{/feed(page='0',size=${pageSize})}"
-               th:classappend="${postPage.number == 0 ? 'disabled' : ''}">First</a>
-        </li>
-        <li class="page-item">
-            <a class="page-link" th:href="@{/feed(page=${postPage.number - 1},size=${pageSize})}"
-               th:classappend="${postPage.number == 0 ? 'disabled' : ''}">Previous</a>
-        </li>
-        <li class="page-item" th:each="i : ${#numbers.sequence(0, postPage.totalPages - 1)}"
-        >
-            <a class="page-link" th:href="@{/feed(page=${i},size=${pageSize})}" th:text="${i + 1}"
-               th:classappend="${postPage.number == i ? 'disabled' : ''}"></a>
-        </li>
-        <li class="page-item">
-            <a class="page-link" th:href="@{/feed(page=${postPage.number + 1},size=${pageSize})}"
-               th:classappend="${postPage.number == postPage.totalPages - 1 ? 'disabled' : ''}">Next</a>
-        </li>
-        <li class="page-item">
-            <a class="page-link" th:href="@{/feed(page=${postPage.totalPages - 1},size=${pageSize})}"
-               th:classappend="${postPage.number == postPage.totalPages - 1 ? 'disabled' : ''}">Last</a>
-        </li>
-    </ul>
-</nav>
-
+<div th:switch="${isFiltered}">
+    <div th:case="false">
+        <nav aria-label="Page navigation">`
+            <ul class="pagination">
+                <li class="page-item">
+                    <a th:href="@{/feed(page='0',size=${pageSize})}"
+                       th:classappend="${postPage.number == 0 ? 'disabled' : ''}">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" th:href="@{/feed(page=${postPage.number - 1},size=${pageSize})}"
+                       th:classappend="${postPage.number == 0 ? 'disabled' : ''}">Previous</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, postPage.totalPages - 1)}"
+                >
+                    <a class="page-link" th:href="@{/feed(page=${i},size=${pageSize})}" th:text="${i + 1}"
+                       th:classappend="${postPage.number == i ? 'disabled' : ''}"></a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" th:href="@{/feed(page=${postPage.number + 1},size=${pageSize})}"
+                       th:classappend="${postPage.number == postPage.totalPages - 1 ? 'disabled' : ''}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" th:href="@{/feed(page=${postPage.totalPages - 1},size=${pageSize})}"
+                       th:classappend="${postPage.number == postPage.totalPages - 1 ? 'disabled' : ''}">Last</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div th:case="*">
+        <nav aria-label="Page navigation">`
+            <ul class="pagination">
+                <li class="page-item">
+                    <a th:href="@{/feed(page='0',size=${pageSize},tagFilter=${tagFilter.id})}"
+                       th:classappend="${postPage.number == 0 ? 'disabled' : ''}">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link"
+                       th:href="@{/feed(page=${postPage.number - 1},size=${pageSize},tagFilter=${tagFilter.id})}"
+                       th:classappend="${postPage.number == 0 ? 'disabled' : ''}">Previous</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, postPage.totalPages - 1)}"
+                >
+                    <a class="page-link" th:href="@{/feed(page=${i},size=${pageSize},tagFilter=${tagFilter.id})}"
+                       th:text="${i + 1}"
+                       th:classappend="${postPage.number == i ? 'disabled' : ''}"></a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link"
+                       th:href="@{/feed(page=${postPage.number + 1},size=${pageSize},tagFilter=${tagFilter.id})}"
+                       th:classappend="${postPage.number == postPage.totalPages - 1 ? 'disabled' : ''}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link"
+                       th:href="@{/feed(page=${postPage.totalPages - 1},size=${pageSize},tagFilter=${tagFilter.id})}"
+                       th:classappend="${postPage.number == postPage.totalPages - 1 ? 'disabled' : ''}">Last</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
 <div class="center-screen">
-    <form th:action="@{/feed(page=${postPage.totalPages - 1},size=10)}" method="GET" id="pageSizeInput">
+    <form th:action="@{/feed}" method="GET" id="pageSizeInput">
         <input type="hidden" name="page" value="0"/>
+        <div th:if="${isFiltered}">
+            <input type="hidden" name="tagFilter" th:value="${tagFilter.id}"/>
+        </div>
         <label>
             <select name="size" size="1" form="pageSizeInput">
                 <option value="10" th:selected="${pageSize==10}">10</option>
@@ -170,6 +221,12 @@
         </label>
     </form>
 </div>
+<div th:switch="${isFiltered}" class="center-screen">
+    <div th:case="true">
+        <a th:href="@{/feed}">Clear filter</a>
+    </div>
+</div>
+
 
 <script>
     function toggleForm() {

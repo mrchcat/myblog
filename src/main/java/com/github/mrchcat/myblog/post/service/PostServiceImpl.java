@@ -74,17 +74,11 @@ public class PostServiceImpl implements PostService {
         tagService.saveTags(newPostDto.getTags(), savedPostId);
     }
 
-    @Override
-    public List<ShortPostDto> getFeedByTag(long tagId) {
-        Collection<Post> postList = postRepository.getFeedByTag(tagId);
-        return PostMapper.toShortDto(postList);
-    }
-
-    @Override
-    public List<ShortPostDto> getFeed() {
-        Collection<Post> postList = postRepository.getFeed();
-        return PostMapper.toShortDto(postList);
-    }
+//    @Override
+//    public List<ShortPostDto> getFeedByTag(long tagId) {
+//        Collection<Post> postList = postRepository.getFeedByTag(tagId);
+//        return PostMapper.toShortDto(postList);
+//    }
 
     @Override
     public Page<ShortPostDto> getFeed(Pageable pageable) {
@@ -92,7 +86,19 @@ public class PostServiceImpl implements PostService {
         List<ShortPostDto> listDto = PostMapper.toShortDto(postList);
         long totalPosts = postRepository.getTotal();
         Page<ShortPostDto> postPage = new PageImpl<ShortPostDto>(listDto, pageable, totalPosts);
-        log.info("totalPosts=" + totalPosts + " ; TotalPages()="
+//        log.info("totalPosts=" + totalPosts + " ; TotalPages()="
+//                + postPage.getTotalPages() + " getNumber()="
+//                + postPage.getNumber());
+        return postPage;
+    }
+
+    @Override
+    public Page<ShortPostDto> getFeedByTag(long tagId, Pageable pageable) {
+        Collection<Post> postList = postRepository.getFeedByTag(tagId, pageable);
+        List<ShortPostDto> listDto = PostMapper.toShortDto(postList);
+        long totalPosts = postRepository.getTotalByTag(tagId);
+        Page<ShortPostDto> postPage = new PageImpl<ShortPostDto>(listDto, pageable, totalPosts);
+        log.info("tagId=" + tagId + " totalPosts=" + totalPosts + " ; TotalPages()="
                 + postPage.getTotalPages() + " getNumber()="
                 + postPage.getNumber());
         return postPage;

@@ -2,7 +2,6 @@ package com.github.mrchcat.myblog.tag.repository;
 
 import com.github.mrchcat.myblog.tag.domain.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -14,24 +13,9 @@ import static java.util.Collections.nCopies;
 
 @Repository
 @RequiredArgsConstructor
-@Slf4j
 public class TagRepositoryImpl implements TagRepository {
     private final JdbcTemplate jdbc;
     private final TagRowMapper tagRowMapper;
-
-    private void linkTagsToPost(List<Tag> tags, long postId) {
-        String query = """
-                INSERT INTO poststags
-                VALUES (?,?)
-                """;
-
-        List<Object[]> params = new ArrayList<>();
-        for (Tag tag : tags) {
-            params.add(new Object[]{postId, tag.getId()});
-            log.info("запрос с параметрами postId=" + postId + "  tag.getId()=" + tag.getId());
-        }
-        jdbc.batchUpdate(query, params);
-    }
 
     @Override
     public void deleteSingleTagsOfPost(long postId) {
@@ -51,7 +35,7 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public List<Tag> saveTagsForPost(Set<String> tagNames, long postId) {
+    public void saveTagsForPost(Set<String> tagNames, long postId) {
         List<Object[]> params = new ArrayList<>();
         for (String name : tagNames) {
             params.add(new Object[]{name});
@@ -69,7 +53,6 @@ public class TagRepositoryImpl implements TagRepository {
                 """;
         List<Tag> tags = jdbc.query(String.format(getQuery, inSql), tagRowMapper, tagNames.toArray());
         linkTagsToPost(tags, postId);
-        return tags;
     }
 
     @Override
@@ -80,5 +63,18 @@ public class TagRepositoryImpl implements TagRepository {
                 WHERE post_id=?
                 """;
         jdbc.update(query, postId);
+    }
+
+    private void linkTagsToPost(List<Tag> tags, long postId) {
+        String query = """
+                INSERT INTO poststags
+                VALUES (?,?)
+                """;
+
+        List<Object[]> params = new ArrayList<>();
+        for (Tag tag : tags) {
+            params.add(new Object[]{postId, tag.getId()});
+        }
+        jdbc.batchUpdate(query, params);
     }
 }

@@ -6,6 +6,8 @@ import com.github.mrchcat.myblog.post.dto.NewPostDto;
 import com.github.mrchcat.myblog.post.dto.PostDto;
 import com.github.mrchcat.myblog.post.dto.ShortPostDto;
 import com.github.mrchcat.myblog.tag.mapper.TagMapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -13,8 +15,14 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 
+@Component
 public class PostMapper {
-    private static final int POST_PREVIEW_LENGTH = 150;
+    private static int POST_PREVIEW_LENGTH;
+
+    @Value("${post.preview.length}")
+    public void setPostPreviewLength(int length) {
+        POST_PREVIEW_LENGTH = length;
+    }
 
 
     public static PostDto toDto(Post post, List<CommentDto> commentDtos) {
@@ -37,7 +45,7 @@ public class PostMapper {
             if (!multipartImage.isEmpty()) {
                 base64Jpeg = Base64.getEncoder().encodeToString(newPostDto.getImage().getBytes());
             }
-        } catch (IOException e) {
+        } catch (IOException ignore) {
         }
         System.out.println("[" + base64Jpeg + "]");
 

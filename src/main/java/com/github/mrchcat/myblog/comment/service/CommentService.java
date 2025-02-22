@@ -11,4 +11,5 @@ public interface CommentService {
     void deleteComment(long commentId, long postId);
 
     void addComment(NewCommentDto newCommentDto, long postId);
+
 }

@@ -10,7 +10,6 @@ import com.github.mrchcat.myblog.post.mapper.PostMapper;
 import com.github.mrchcat.myblog.post.repository.PostRepository;
 import com.github.mrchcat.myblog.tag.service.TagService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +22,6 @@ import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
@@ -62,7 +60,6 @@ public class PostServiceImpl implements PostService {
         Post updatedPost = postRepository.getPost(updatedPostId)
                 .orElseThrow(() -> new NoSuchElementException("Post not found"));
         List<CommentDto> commentDtos = commentService.getCommentsByPost(updatedPostId);
-        log.debug(updatedPost.toString());
         return PostMapper.toDto(updatedPost, commentDtos);
     }
 
@@ -70,26 +67,15 @@ public class PostServiceImpl implements PostService {
     public void addNewPost(NewPostDto newPostDto) {
         Post post = PostMapper.toPost(newPostDto);
         long savedPostId = postRepository.addNewPost(post);
-        log.info("СОхранен тег " + newPostDto.getTags() + "для id=" + savedPostId);
         tagService.saveTags(newPostDto.getTags(), savedPostId);
     }
-
-//    @Override
-//    public List<ShortPostDto> getFeedByTag(long tagId) {
-//        Collection<Post> postList = postRepository.getFeedByTag(tagId);
-//        return PostMapper.toShortDto(postList);
-//    }
 
     @Override
     public Page<ShortPostDto> getFeed(Pageable pageable) {
         Collection<Post> postList = postRepository.getFeed(pageable);
         List<ShortPostDto> listDto = PostMapper.toShortDto(postList);
         long totalPosts = postRepository.getTotal();
-        Page<ShortPostDto> postPage = new PageImpl<ShortPostDto>(listDto, pageable, totalPosts);
-//        log.info("totalPosts=" + totalPosts + " ; TotalPages()="
-//                + postPage.getTotalPages() + " getNumber()="
-//                + postPage.getNumber());
-        return postPage;
+        return new PageImpl<>(listDto, pageable, totalPosts);
     }
 
     @Override
@@ -97,10 +83,6 @@ public class PostServiceImpl implements PostService {
         Collection<Post> postList = postRepository.getFeedByTag(tagId, pageable);
         List<ShortPostDto> listDto = PostMapper.toShortDto(postList);
         long totalPosts = postRepository.getTotalByTag(tagId);
-        Page<ShortPostDto> postPage = new PageImpl<ShortPostDto>(listDto, pageable, totalPosts);
-        log.info("tagId=" + tagId + " totalPosts=" + totalPosts + " ; TotalPages()="
-                + postPage.getTotalPages() + " getNumber()="
-                + postPage.getNumber());
-        return postPage;
+        return new PageImpl<>(listDto, pageable, totalPosts);
     }
 }

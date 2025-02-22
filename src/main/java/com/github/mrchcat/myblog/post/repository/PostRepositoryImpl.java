@@ -14,7 +14,6 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -139,7 +138,7 @@ public class PostRepositoryImpl implements PostRepository {
         }
     }
 
-     @Override
+    @Override
     public Collection<Post> getFeed(Pageable pageable) {
         String query = """
                 SELECT p.id,p.name,text,picture,p.likes,p.comment_counter, pt.tag_id, t.name AS tag_name
@@ -185,7 +184,7 @@ public class PostRepositoryImpl implements PostRepository {
                 """;
         int pageSize = pageable.getPageSize();
         long minPostId = (long) pageable.getPageNumber() * pageSize;
-        Object[] params = {tagId,minPostId, pageSize};
+        Object[] params = {tagId, minPostId, pageSize};
         try {
             Collection<Post> posts = jdbc.query(query, postResultSetExtractor, params);
             if (posts == null) {
@@ -196,7 +195,6 @@ public class PostRepositoryImpl implements PostRepository {
             return Collections.emptyList();
         }
     }
-
 
 
     @Override
@@ -210,13 +208,13 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public long getTotalByTag(long tagId) {
-        String query= """
+        String query = """
                 SELECT COUNT(p.id)
                 FROM posts AS p
                 JOIN poststags AS pt ON p.id=pt.post_id
                 WHERE tag_id=?
                 """;
-        Long total = jdbc.queryForObject(query, Long.class,tagId);
+        Long total = jdbc.queryForObject(query, Long.class, tagId);
         if (total == null) {
             throw new InternalException("Запрос вернул null");
         }

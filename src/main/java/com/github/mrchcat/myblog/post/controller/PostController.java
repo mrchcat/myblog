@@ -4,7 +4,6 @@ import com.github.mrchcat.myblog.post.dto.NewPostDto;
 import com.github.mrchcat.myblog.post.dto.PostDto;
 import com.github.mrchcat.myblog.post.dto.ShortPostDto;
 import com.github.mrchcat.myblog.post.service.PostService;
-import com.github.mrchcat.myblog.tag.domain.Tag;
 import com.github.mrchcat.myblog.tag.dto.TagDto;
 import com.github.mrchcat.myblog.tag.service.TagService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @Controller
@@ -37,20 +35,7 @@ public class PostController {
         return "redirect:feed";
     }
 
-//    @GetMapping(value = {"/feed/", "/feed"})
-//    public String getFeed(@RequestParam(value = "page", defaultValue = "0") Integer currentPage,
-//                          @RequestParam(value = "size", defaultValue = "10") Integer pageSize,
-//                          Model model) {
-//
-//        Pageable pageable = PageRequest.of(currentPage, pageSize);
-//        Page<ShortPostDto> postPage = postService.getFeed(pageable);
-//        model.addAttribute("postPage", postPage);
-//        model.addAttribute("pageSize", pageSize);
-//        model.addAttribute("isFiltered",false);
-//        return "feed";
-//    }
-
-    @GetMapping(value = {"/feed/", "/feed"})
+    @GetMapping(value = {"/feed", "/feed"})
     public String getFeedByTag(@RequestParam(value = "tagFilter", required = false) Long tagId,
                                @RequestParam(value = "page", defaultValue = "0") Integer currentPage,
                                @RequestParam(value = "size", defaultValue = "10") Integer pageSize,
@@ -70,7 +55,7 @@ public class PostController {
                         .getTagsDto().stream()
                         .filter(t -> t.getId() == tagId)
                         .findFirst()
-                        .get();
+                        .orElseThrow(NoSuchElementException::new);
                 model.addAttribute("tagFilter", tagFilter);
             }
         }
@@ -79,6 +64,21 @@ public class PostController {
         return "feed";
     }
 
+    @PostMapping(value = "/feed/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String addNewPost(@RequestParam("name") String name,
+                             @RequestParam("image") MultipartFile image,
+                             @RequestParam("text") String text,
+                             @RequestParam("tags") String tags,
+                             Model model) {
+        NewPostDto newPostDto = NewPostDto.builder()
+                .name(name)
+                .image(image)
+                .text(text)
+                .tags(tags)
+                .build();
+        postService.addNewPost(newPostDto);
+        return "redirect:/feed";
+    }
 
     @GetMapping("/post/{postId}")
     public String getPost(@PathVariable(value = "postId") long postId, Model model) {
@@ -87,6 +87,7 @@ public class PostController {
         }
         PostDto postDto = postService.getPostDto(postId);
         model.addAttribute("postDto", postDto);
+        model.addAttribute("newPostDto", new NewPostDto());
         return "post";
     }
 
@@ -96,7 +97,7 @@ public class PostController {
             throw new IllegalArgumentException("номер поста должен быть положительным числом");
         }
         postService.deletePost(postId);
-        return "feed";
+        return "redirect:/feed";
     }
 
     @PostMapping(value = "/post/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -120,22 +121,6 @@ public class PostController {
         return "post";
     }
 
-    @PostMapping(value = "/feed/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String addNewPost(@RequestParam("name") String name,
-                             @RequestParam("image") MultipartFile image,
-                             @RequestParam("text") String text,
-                             @RequestParam("tags") String tags,
-                             Model model) {
-        NewPostDto newPostDto = NewPostDto.builder()
-                .name(name)
-                .image(image)
-                .text(text)
-                .tags(tags)
-                .build();
-        postService.addNewPost(newPostDto);
-        return "redirect:/feed";
-    }
-
     @PostMapping("/post/like/{postId}")
     public String addLike(@PathVariable(value = "postId") long postId) {
         if (postId <= 0) {
@@ -144,11 +129,4 @@ public class PostController {
         postService.addLike(postId);
         return "redirect:/post/" + postId;
     }
-//    @GetMapping("/feed/tag/{tagId}")
-//    public String getFeedByTag(@PathVariable("tagId") long tagId, Model model) {
-//        List<ShortPostDto> shortPostDtoList = postService.getFeedByTag(tagId);
-//        model.addAttribute("shortPostDtoList", shortPostDtoList);
-//        return "feed";
-//    }
-
 }

@@ -27,7 +27,7 @@
 <br>
 <b>Теги:</b>
 <th:block th:each="tagDto : ${postDto.tagsDto}">
-    <a th:href="@{/feed/tag/{tagId}(tagId=${tagDto.id})}" th:text="${tagDto.name}">tag</a>
+    <a th:href="@{/feed(tagFilter=${tagDto.id})}" th:text="${tagDto.name}">tag</a>
     &nbsp
 </th:block>
 <br>

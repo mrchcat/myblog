@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"/>
     <title>Лента постов</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <style>
         .disabled {
          pointer-events: none; /* Отключим взаимодействие мыши */
@@ -77,7 +77,7 @@
     <tr>
         <td>
             <button type="submit" onclick="toggleForm()">add post</button>
-        <td>
+        </td>
     </tr>
 </table>
 <div class="form-container" id="editPostForm" style="display:none">
@@ -86,23 +86,23 @@
         <table>
             <tr>
                 <td><label for="name">Название поста:</label></td>
-                <td><input type="text" id="name" name="name" required style="width:800px;"></td>
+                <td><input type="text" id="name" name="name" th:required="required" style="width:800px;"/></td>
             </tr>
             <tr>
                 <td>Изображение:</td>
-                <td><input id="imageDownload" type="file" name="image" accept="image/jpeg"></td>
+                <td><input id="imageDownload" type="file" name="image" accept="image/jpeg"/></td>
             </tr>
             <tr>
                 <td><label for="text">Содержимое поста:</label></td>
-                <td><textarea id="text" name="text" required rows="5" cols="91"></textarea></td>
+                <td><textarea id="text" name="text" th:required="required" rows="5" cols="91"></textarea></td>
             </tr>
             <tr>
                 <td><label for="name">Введите теги через ";"</label></td>
-                <td><input type="text" id="tags" name="tags" required style="width:800px;"></td>
+                <td><input type="text" id="tags" name="tags" th:required="required" style="width:800px;"/></td>
             </tr>
             <tr>
                 <td>
-                    <br>
+                    <br/>
                 </td>
             </tr>
             <tr>
@@ -121,30 +121,30 @@
             <h3>
                 <a th:href="@{/post/{postId}(postId=${shortPostDto.id})}" th:text="${shortPostDto.name}">Пост</a>
             </h3>
-            <img th:src="'data:image/jpeg;base64,' + ${shortPostDto.base64Jpeg}" alt="Image" width="150">
+            <img th:src="'data:image/jpeg;base64,' + ${shortPostDto.base64Jpeg}" alt="Image" width="150"/>
             <section class="post-content" style="white-space: pre-line" th:text="${shortPostDto.text}">Текст поста
             </section>
-            <br>
+            <br/>
             <table>
                 <tr>
-                    <td><img th:src="@{/images/heart.png}" width="30"></td>
+                    <td><img th:src="@{/images/heart.png}" width="30"/></td>
                     <td th:text="${shortPostDto.likes}"></td>
-                    <td><img th:src="@{/images/comment.png}" width="30"></td>
+                    <td><img th:src="@{/images/comment.png}" width="30"/></td>
                     <td th:text="${shortPostDto.commentCounter}"></td>
 
                 </tr>
             </table>
-            <br>
+            <br/>
             <b>Теги:</b>
             <th:block th:each="tagDto : ${shortPostDto.tagsDto}">
                 <a th:href="@{/feed(tagFilter=${tagDto.id})}" th:text="${tagDto.name}">tag</a>
-                &nbsp
+                &#160;
             </th:block>
-            <hr>
+            <hr/>
         </td>
     </tr>
 </table>
-<br>
+<br/>
 <div th:switch="${isFiltered}">
     <div th:case="false">
         <nav aria-label="Page navigation">`
@@ -217,7 +217,7 @@
                 <option value="20" th:selected="${pageSize==20}">20</option>
                 <option value="50" th:selected="${pageSize==50}">50</option>
             </select>
-            <input type="submit" value="cтраниц на экране">
+            <input type="submit" value="cтраниц на экране"/>
         </label>
     </form>
 </div>

@@ -2,10 +2,15 @@ package com.github.mrchcat.myblog.comment.repository;
 
 import com.github.mrchcat.myblog.comment.domain.Comment;
 import com.github.mrchcat.myblog.comment.dto.NewCommentDto;
+import com.sun.jdi.InternalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
 
 @Repository
@@ -35,12 +40,23 @@ public class CommentRepositoryImpl implements CommentRepository {
     }
 
     @Override
-    public void addComment(NewCommentDto comment) {
+    public long addComment(NewCommentDto comment) {
         String query = """
                 INSERT INTO comments(text,post_id)
                 VALUES (?,?)
                 """;
-        jdbc.update(query, comment.getText(), comment.getPostId());
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbc.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, comment.getText());
+            ps.setLong(2, comment.getPostId());
+            return ps;
+        }, keyHolder);
+        Number key = keyHolder.getKey();
+        if (key == null) {
+            throw new InternalException("Комментарий не добавлен");
+        }
+        return key.longValue();
     }
 
     @Override

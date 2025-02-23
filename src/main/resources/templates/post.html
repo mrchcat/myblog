@@ -3,19 +3,19 @@
 
 <head>
     <title>Пост</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body>
 <h2><span th:text="${postDto.name}">название поста</span></h2>
-<img th:src="'data:image/jpeg;base64,' + ${postDto.base64Jpeg}" alt="Image" width="150">
+<img th:src="'data:image/jpeg;base64,' + ${postDto.base64Jpeg}" alt="Image" width="150"/>
 <h3>Содержание поста</h3>
 <section class="post-content" style="white-space: pre-line" th:text="${postDto.text}">Текст поста</section>
-<br>
+<br/>
 <table>
     <tr>
-        <td><img th:src="@{/images/heart.png}" width="30"></td>
-        <td><span th:text="${postDto.likes}">56</span></td>
+        <td><img th:src="@{/images/heart.png}" width="30"/></td>
+        <td><span id="likes" th:text="${postDto.likes}">56</span></td>
         <td>
             <form th:action="@{/post/like/{id}(id=${postDto.id})}" method="post" style="display:inline;">
                 <input type="hidden"/>
@@ -24,19 +24,19 @@
         </td>
     </tr>
 </table>
-<br>
+<br/>
 <b>Теги:</b>
 <th:block th:each="tagDto : ${postDto.tagsDto}">
     <a th:href="@{/feed(tagFilter=${tagDto.id})}" th:text="${tagDto.name}">tag</a>
-    &nbsp
+    &#160;
 </th:block>
-<br>
-<br>
+<br/>
+<br/>
 <table>
     <tr>
         <td>
             <button type="submit" onclick="toggleForm()">edit post</button>
-        <td>
+        </td>
         <td>
             <form th:action="@{/post/{id}(id=${postDto.id})}" method="post" style="display:inline;">
                 <input type="hidden" name="_method" value="delete"/>
@@ -52,24 +52,23 @@
         <table>
             <tr>
                 <td><label for="name">Название поста:</label></td>
-                <td><input type="text" id="name" name="name" required style="width:800px;"></td>
+                <td><input type="text" id="name" name="name" th:required="required" style="width:800px;"/></td>
             </tr>
             <tr>
                 <td>Изображение:</td>
-                <td><input id="image" type="file" name="image" accept="image/jpeg" multiple="multiple">
-                </td>
+                <td><input id="image" type="file" name="image" accept="image/jpeg" multiple="multiple"/></td>
             </tr>
             <tr>
                 <td><label for="text">Содержимое поста:</label></td>
-                <td><textarea id="text" name="text" required rows="5" cols="91"></textarea></td>
+                <td><textarea id="text" name="text" th:required="required" rows="5" cols="91"></textarea></td>
             </tr>
             <tr>
                 <td><label for="name">Введите теги через ";"</label></td>
-                <td><input type="text" id="tags" name="tags" required style="width:800px;"></td>
+                <td><input type="text" id="tags" name="tags" th:required="required" style="width:800px;"/></td>
             </tr>
             <tr>
                 <td>
-                    <br>
+                    <br/>
                 </td>
             </tr>
             <tr>
@@ -80,7 +79,7 @@
         </table>
     </form>
 </div>
-<br>
+<br/>
 <h3>Комментарии:</h3>
 <table>
     <tr th:each="comment : ${postDto.commentsDto}">
@@ -88,7 +87,7 @@
             <table>
                 <tr>
                     <td>
-                        <section class="post-content" style="white-space: pre-line" th:text="${comment.text}">текст
+                        <section class="comment-content" style="white-space: pre-line" th:text="${comment.text}">текст
                             комментария
                         </section>
                     </td>
@@ -97,29 +96,29 @@
                     <td>
                         <form th:action="@{/post/{postId}/comment/{commentId}(postId=${postDto.id}, commentId=${comment.id})}"
                               method="POST" style="display:inline;">
-                            <input type="hidden" name="_method" value="delete">
+                            <input type="hidden" name="_method" value="delete"/>
                             <button type="submit">delete comment</button>
                         </form>
                     </td>
                 </tr>
             </table>
-        <td>
+        </td>
     </tr>
 </table>
-<br>
-<br>
+<br/>
+<br/>
 <button class="btn-add" onclick="toggleForm2()">Add comment</button>
-<br>
+<br/>
 <div class="form-container" style="display: none;" id="addComment">
     <h4>Введите комментарий (для завершения Ctrl+Enter):</h4>
     <form th:action="@{/post/{postId}/comment (postId=${postDto.id})}" method="POST">
-        <input type="hidden" name="_method" value="add">
+        <input type="hidden" name="_method" value="add"/>
         <label>
-            <textarea required name="text" rows="5" cols="91"></textarea>
+            <textarea th:required="required" name="text" rows="5" cols="91"></textarea>
         </label>
     </form>
 </div>
-<br>
+<br/>
 <a th:href="@{/feed}" th:text="@{Вернуться на главную}"></a>
 
 <script>
@@ -129,16 +128,18 @@
     }
 </script>
 
-<script>
-    function toggleForm2() {
-        const form = document.getElementById('addComment');
-        form.style.display = form.style.display === 'none' ? 'block' : 'none';
-        document.body.addEventListener('keydown', (event) => {
-            if(event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
-                event.target.form?.submit();
-            }
-        });
-    }
+<script type="text/javascript">
+    // <![CDATA[
+        function toggleForm2() {
+            const form = document.getElementById('addComment');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+            document.body.addEventListener('keydown', (event) => {
+                if(event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+                    event.target.form?.submit();
+                }
+            });
+        }
+    // ]]>
 </script>
 
 <script>

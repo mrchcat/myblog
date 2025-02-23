@@ -97,7 +97,7 @@
                 <td><textarea id="text" name="text" th:required="required" rows="5" cols="91"></textarea></td>
             </tr>
             <tr>
-                <td><label for="name">Введите теги через ";"</label></td>
+                <td><label for="tags">Введите теги через ";"</label></td>
                 <td><input type="text" id="tags" name="tags" th:required="required" style="width:800px;"/></td>
             </tr>
             <tr>
@@ -127,9 +127,9 @@
             <br/>
             <table>
                 <tr>
-                    <td><img th:src="@{/images/heart.png}" width="30"/></td>
+                    <td><img th:src="@{/images/heart.png}" width="30" alt="like"/></td>
                     <td th:text="${shortPostDto.likes}"></td>
-                    <td><img th:src="@{/images/comment.png}" width="30"/></td>
+                    <td><img th:src="@{/images/comment.png}" width="30" alt="comment"/></td>
                     <td th:text="${shortPostDto.commentCounter}"></td>
 
                 </tr>

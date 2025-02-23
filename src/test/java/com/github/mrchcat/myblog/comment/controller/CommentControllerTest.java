@@ -5,6 +5,7 @@ import com.github.mrchcat.myblog.comment.repository.CommentRepository;
 import com.github.mrchcat.myblog.configuration.TestDataSourceConfiguration;
 import com.github.mrchcat.myblog.configuration.TestWebConfiguration;
 import com.github.mrchcat.myblog.post.repository.PostRepository;
+import com.sun.jdi.InternalException;
 import javassist.NotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
@@ -20,6 +23,9 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -40,8 +46,6 @@ class CommentControllerTest {
     private JdbcTemplate jdbc;
     @Autowired
     private PostRepository postRepository;
-    @Autowired
-    private CommentRepository commentRepository;
     private MockMvc mockMvc;
 
     @BeforeEach
@@ -79,7 +83,7 @@ class CommentControllerTest {
     void deleteComment() throws Exception {
         long postId = getFirstPostId();
         String commentText = "comment to delete " + (int) (Math.random() * 1000);
-        long commentId = commentRepository.addComment(new NewCommentDto(commentText, postId));
+        long commentId = addCommentAndGetId(commentText,postId);
         mockMvc.perform(get("/post/" + postId))
                 .andExpect(xpath("//section[@class='comment-content'][normalize-space(text()) = '"
                         + commentText + "']").exists());
@@ -100,5 +104,28 @@ class CommentControllerTest {
                 .stream().findFirst()
                 .orElseThrow(() -> new NotFoundException("пост не найден")).getId();
     }
+
+    private long addCommentAndGetId(String commentText,long postId){
+        String query = """
+                INSERT INTO comments(text,post_id)
+                VALUES (?,?)
+                """;
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbc.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, commentText);
+            ps.setLong(2, postId);
+            return ps;
+        }, keyHolder);
+        Number key = keyHolder.getKey();
+        if (key == null) {
+            throw new InternalException("Пост не добавлен");
+        }
+        return key.longValue();
+
+
+    }
+
+
 
 }

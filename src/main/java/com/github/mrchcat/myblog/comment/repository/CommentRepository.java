@@ -10,7 +10,7 @@ public interface CommentRepository {
 
     void deleteComment(long commentId);
 
-    long addComment(NewCommentDto newCommentDto);
+    void addComment(NewCommentDto newCommentDto);
 
     void incrementCommentCounter(long postId);
 

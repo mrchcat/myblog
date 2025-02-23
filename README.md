@@ -4,11 +4,12 @@
 фильтрация по тегам, пагинация. 
 
 Версия: Java 21
-Зависимости: Spring MVC, Spring Data, Thymeleaf, Postgres, Maven, JUnit, Mockito, Hamcrest, Lombok, Logback.
-В качестве контейнера сервлетов используется Tomcat.
+Зависимости: Spring MVC, Spring Data, Thymeleaf, Postgres, Maven, JUnit, Hamcrest, Lombok, Logback.
+В качестве контейнера сервлетов используется Tomcat 11.
 
 Для запуска программы необходим Docker и Maven. 
 1) Для сборки war архива выполните команду "mvn package" 
 2) Перейдите в папку /myblog, где расположен файл docker-compose.yaml и выполните команду "docker-compose up". После запуска контейнеров,
 блог будет доступен по адресу http://localhost:8080/myblog. 
-В случае конфликта портов внесите исправления в docker-compose.yaml. 
+В случае конфликта портов внесите исправления в docker-compose.yaml.
+3) Длина превью комментариев задается параметром POST_PREVIEW_LENGTH 

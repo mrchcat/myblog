@@ -30,7 +30,7 @@ public class PostController {
         return "redirect:feed";
     }
 
-    @GetMapping(value = {"/feed", "/feed"})
+    @GetMapping("/feed")
     public String getFeedByTag(@RequestParam(value = "tagFilter", required = false) Long tagId,
                                @RequestParam(value = "page", defaultValue = "0") Integer currentPage,
                                @RequestParam(value = "size", defaultValue = "10") Integer pageSize,

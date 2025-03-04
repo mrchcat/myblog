@@ -4,9 +4,10 @@
 фильтрация по тегам, пагинация. 
 
 Версия: Java 21
-Зависимости: Spring Boot, Spring MVC, Spring Data, Thymeleaf, Postgres, Gradle, Testcontainers, JUnit, Lombok, Logback.
+
+Зависимости: Spring Boot, Spring MVC, Spring Data, Thymeleaf, Postgres, Gradle, Testcontainers, JUnit, Lombok.
 
 Для запуска программы необходим Docker. 
-1) Перейдите в папку /myblog и соберите проект командой "gradlew clean bootJar"
+1) Перейдите в папку /myblog и соберите проект командой "gradlew clean bootJar" (команда может отличаться в зависимости от операционной системы)
 2) Выполните команду "docker-compose up". После запуска контейнеров блог будет доступен по адресу http://localhost:8080/myblog. 
 В случае конфликта портов внесите исправления в docker-compose.yaml. Длина превью комментариев задается параметром POST_PREVIEW_LENGTH 

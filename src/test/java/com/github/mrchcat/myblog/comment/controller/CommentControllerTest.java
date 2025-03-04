@@ -1,31 +1,23 @@
 package com.github.mrchcat.myblog.comment.controller;
 
-import com.github.mrchcat.myblog.comment.dto.NewCommentDto;
-import com.github.mrchcat.myblog.comment.repository.CommentRepository;
-import com.github.mrchcat.myblog.configuration.TestDataSourceConfiguration;
-import com.github.mrchcat.myblog.configuration.TestWebConfiguration;
 import com.github.mrchcat.myblog.post.repository.PostRepository;
 import com.sun.jdi.InternalException;
-import javassist.NotFoundException;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.NoSuchElementException;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -34,32 +26,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
-@SpringJUnitConfig(classes = {TestDataSourceConfiguration.class, TestWebConfiguration.class})
+@SpringBootTest
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
-@WebAppConfiguration
-@TestPropertySource(locations = "classpath:test-application.properties")
+@Transactional
 class CommentControllerTest {
 
-    @Autowired
-    private WebApplicationContext webApplicationContext;
     @Autowired
     private JdbcTemplate jdbc;
     @Autowired
     private PostRepository postRepository;
+    @Autowired
     private MockMvc mockMvc;
-
-    @BeforeEach
-    void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-    }
-
-    @AfterEach
-    void cleanUp() {
-        jdbc.execute("DELETE FROM poststags");
-        jdbc.execute("DELETE FROM comments");
-        jdbc.execute("DELETE FROM tags");
-        jdbc.execute("DELETE FROM posts");
-    }
 
     @Test
     @Sql(scripts = "classpath:test-data/add-post.sql")
@@ -99,16 +77,17 @@ class CommentControllerTest {
                         + commentText + "']").doesNotExist());
     }
 
-    private long getFirstPostId() throws NotFoundException {
+    private long getFirstPostId() throws NoSuchElementException {
         return postRepository.getFeed(Pageable.ofSize(1))
                 .stream().findFirst()
-                .orElseThrow(() -> new NotFoundException("пост не найден")).getId();
+                .orElseThrow(() -> new NoSuchElementException("пост не найден")).getId();
     }
 
     private long addCommentAndGetId(String commentText,long postId){
         String query = """
                 INSERT INTO comments(text,post_id)
                 VALUES (?,?)
+                RETURNING id
                 """;
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(connection -> {
@@ -122,10 +101,5 @@ class CommentControllerTest {
             throw new InternalException("Пост не добавлен");
         }
         return key.longValue();
-
-
     }
-
-
-
 }

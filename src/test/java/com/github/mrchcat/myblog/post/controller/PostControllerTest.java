@@ -1,26 +1,19 @@
 package com.github.mrchcat.myblog.post.controller;
 
-import com.github.mrchcat.myblog.configuration.TestDataSourceConfiguration;
-import com.github.mrchcat.myblog.configuration.TestWebConfiguration;
 import com.github.mrchcat.myblog.post.domain.Post;
 import com.github.mrchcat.myblog.post.repository.PostRepository;
-import javassist.NotFoundException;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -32,32 +25,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
-@SpringJUnitConfig(classes = {TestDataSourceConfiguration.class, TestWebConfiguration.class})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
-@WebAppConfiguration
-@TestPropertySource(locations = "classpath:test-application.properties")
+@Transactional
 class PostControllerTest {
 
     @Autowired
-    private WebApplicationContext webApplicationContext;
-    @Autowired
-    private JdbcTemplate jdbc;
-    @Autowired
     private PostRepository postRepository;
+    @Autowired
     private MockMvc mockMvc;
-
-    @BeforeEach
-    void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-    }
-
-    @AfterEach
-    void cleanUp() {
-        jdbc.execute("DELETE FROM poststags");
-        jdbc.execute("DELETE FROM comments");
-        jdbc.execute("DELETE FROM tags");
-        jdbc.execute("DELETE FROM posts");
-    }
 
     @Test
     void getStartPage() throws Exception {
@@ -133,10 +110,10 @@ class PostControllerTest {
                 .andExpect(xpath("//span[@id='likes']").string(String.valueOf(++likes)));
     }
 
-    private Post getFirstPost() throws NotFoundException {
+    private Post getFirstPost() throws NoSuchElementException {
         return postRepository.getFeed(Pageable.ofSize(1))
                 .stream().findFirst()
-                .orElseThrow(() -> new NotFoundException("пост не найден"));
+                .orElseThrow(() -> new NoSuchElementException("пост не найден"));
     }
 
     private Map<Long, String> getAllPost() {

@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/myblog
+    username: postgres
+    password: Inushing1980
+    driver: org.postgresql.Driver
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:database/schema.sql
+      data-locations: classpath:database/data.sql
+logging:
+  pattern=file: "%d{HH:mm:ss} %-5level %logger{36} - %msg%n"
+  level:
+    root: DEBUG
+    org.zalando.logbook: INFO
+
+#preview length in post's feed
+post.preview.length: 100

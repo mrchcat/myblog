@@ -6,7 +6,6 @@ import com.github.mrchcat.myblog.post.dto.ShortPostDto;
 import com.github.mrchcat.myblog.post.service.PostService;
 import com.github.mrchcat.myblog.tag.dto.TagDto;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +22,6 @@ import java.util.NoSuchElementException;
 
 @Controller
 @RequiredArgsConstructor
-@Slf4j
 public class PostController {
     private final PostService postService;
 
@@ -48,7 +46,7 @@ public class PostController {
             if (postPage.hasContent()) {
                 TagDto tagFilter = postPage
                         .getContent()
-                        .getFirst()
+                        .get(0)
                         .getTagsDto().stream()
                         .filter(t -> t.getId() == tagId)
                         .findFirst()

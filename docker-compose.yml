@@ -26,10 +26,10 @@ services:
       myblog-database:
         condition: service_healthy
     environment:
-      - DATASOURCE_URL=jdbc:postgresql://myblog-database:5432/myblogdb
-      - DATASOURCE_USERNAME=user
-      - DATASOURCE_PASSWORD=12345
-      - DATASOURCE_DRIVER=org.postgresql.Driver
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://myblog-database:5432/myblogdb
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=12345
+      - SPRING_DATASOURCE_DRIVER=org.postgresql.Driver
       - POST_PREVIEW_LENGTH=100
     networks:
       - backend
